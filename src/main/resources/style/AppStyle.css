@@ -1,0 +1,33 @@
+/*
+    WorkStation
+*/
+.WorkStation{
+    -fx-background-color: "#ffffff";  
+}
+
+/*
+    LeftSideBar
+*/
+.LeftSideBar{
+    -fx-background-color: "#424242";  
+    -fx-text-fill: "#ffffff";
+    -fx-background-radius: 0px;
+    -fx-background-insets: 0px;
+}
+
+
+/*
+    Popup
+*/
+
+.MenuContect { 
+    -fx-background-color: "#ffffff";
+    -fx-border-color: "#f2f2f2";
+    -fx-border-width: 2px;
+    -fx-border-radius:5px;
+
+}
+
+.MenuItem{
+    
+}

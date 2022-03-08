@@ -1,0 +1,818 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.perdiz.neblina.app.component;
+
+import com.jfoenix.controls.JFXButton;
+import com.perdiz.neblina.app.component.device.ActuatorDevice;
+import com.perdiz.neblina.app.component.device.CableDevice;
+import com.perdiz.neblina.app.component.device.SensorDevice;
+import com.perdiz.neblina.app.component.device.ServerDevice;
+import com.perdiz.neblina.app.controller.AppController;
+import com.perdiz.neblina.app.iu.Device;
+import com.perdiz.neblina.app.resource.ImageResource;
+import com.perdiz.neblina.app.resource.Resource;
+import com.perdiz.neblina.heuristics.TrafficHeuristc;
+import com.perdiz.neblina.model.*;
+import javafx.animation.Interpolator;
+import javafx.animation.TranslateTransition;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+//import javafx.animation.transition.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+/**
+ *
+ * @author alexander
+ */
+public class App extends AppController {
+
+    private final ToolBar toolBar = new ToolBar();
+    private final RightSideBar rightSideBar = new RightSideBar();
+    private final LeftSideBar leftSideBar = new LeftSideBar();
+    private final WorkStation workStation = new WorkStation();
+    protected Stage formStage;
+    protected Scene formScene;
+    protected TextField latencyField;
+    protected TextField trafficField;
+    protected CableModel cable;
+    protected Device deviceEnd;
+    ArrayList<CableDevice> connects = new ArrayList<CableDevice>();
+    ArrayList<CableDevice> connectsRep = new ArrayList<CableDevice>();
+    ArrayList<Integer> slots = new ArrayList<Integer>();
+    CableDevice cb = new CableDevice();
+    ImageView trimg = new ImageView("file:src/main/resources/image/email1.png");
+    ArrayList<ImageView> imgTraffics = new ArrayList<ImageView>();
+    String nameDev1;
+    String nameDev2;
+    String traffic;
+
+    //protected
+    protected ComboBox<String> cbx;
+
+
+    //Sensor buttons
+    JFXButton btnCardiogram = new JFXButton("", new ImageResource(Resource.CARDIOGRAM));
+    JFXButton btnPulseOximeter = new JFXButton("", new ImageView("file:src/main/resources/image/pulse-oximeter.png"));
+    JFXButton btnAirPurifier = new JFXButton("", new ImageView("file:src/main/resources/image/air-purifier.png"));
+    JFXButton btnGlucometer = new JFXButton("", new ImageView("file:src/main/resources/image/glucometer.png"));
+    JFXButton btnSmartTemperature = new JFXButton("", new ImageView("file:src/main/resources/image/smart-temperature.png"));
+    JFXButton btnSmartwatch = new JFXButton("", new ImageView("file:src/main/resources/image/smartwatch.png"));
+    JFXButton btnCameraHome = new JFXButton("", new ImageView("file:src/main/resources/image/cctv.png"));
+    JFXButton btnFingerPrint = new JFXButton("", new ImageView("file:src/main/resources/image/fingerprint.png"));
+
+    JFXButton btnChargingStation = new JFXButton("", new ImageView("file:src/main/resources/image/charging-station.png"));
+    JFXButton btnLightSensor = new JFXButton("", new ImageView("file:src/main/resources/image/light-sensor.png"));
+    JFXButton btnLightMeter = new JFXButton("", new ImageView("file:src/main/resources/image/light-meter.png"));
+    JFXButton btnMotionSensor = new JFXButton("", new ImageView("file:src/main/resources/image/motion-sensor.png"));
+    JFXButton btnDriverlessCar = new JFXButton("", new ImageView("file:src/main/resources/image/driverless-car.png"));
+
+
+    public App() {
+        cable = new CableModel();
+        this.initLeftSideBar();
+        this.initToolBar();
+        this.init();
+    }
+
+    private void init() {
+        //items.clear();
+
+        ScrollPane workStationScroll = new ScrollPane(workStation);
+        workStationScroll.setFitToHeight(true);
+        workStationScroll.setFitToWidth(true);
+        this.latencyField = new TextField("");
+        this.trafficField = new TextField("");
+        this.setTop(toolBar);
+        this.setLeft(leftSideBar);
+        this.setCenter(workStationScroll);
+        this.setRight(rightSideBar);
+
+    }
+
+    private void initToolBar() {
+
+        this.toolBar.setOnShowLeftBarActionEvent((t) -> {
+            this.leftSideBar.show();
+        });
+
+        this.toolBar.setOnNewActionEvent((t) -> {
+            String clearWorkStation = workStation.canClearWorkStation();
+            switch (clearWorkStation) {
+                case "Undefined":
+                    workStation.restartInitialsValues();
+                    break;
+                    case "SaveFirst":
+                    workStation.saveDocument();
+                    workStation.restartInitialsValues();
+                    break;
+                case "DontSave":
+                    workStation.restartInitialsValues();
+                    break;
+            }
+
+        });
+
+        this.toolBar.setOnOpenActionEvent((t) -> {
+            workStation.openDocument();
+        });
+
+        this.toolBar.setOnSaveActionEvent((t) -> {
+            workStation.saveDocument();
+        });
+
+        this.toolBar.setOnPlayActionEvent((t) -> {
+            //Work time server
+            ArrayList<Integer> rmvms = new ArrayList<Integer>();
+            ServerModel model = trafficServer();
+            TrafficHeuristc tf = new TrafficHeuristc((int)model.getVmachines(),slots.size());
+            for(int rv: model.getRamVM()){
+                rmvms.add(rv);
+            }
+
+            tf.calcLoadServer(slots, rmvms);
+            slots.clear();
+        });
+
+        this.toolBar.setOnshowRightBarActionEvent((t) -> {
+            this.rightSideBar.show();
+        });
+    }
+
+    private void initLeftSideBar() {
+        this.leftSideBar.setCloudServerActionEvent((t) -> {
+            byte number = workStation.getNumberOfCloudServers();
+            Device device = new ServerDevice(new ServerModel("CS" + number, "CS" + number, Byte.parseByte("0")));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        });
+        this.leftSideBar.setFogServerActionEvent((t) -> {
+            byte number = workStation.getNumberOfFogServers();
+            Device device = new ServerDevice(new ServerModel("FS" + number, "FS" + number, Byte.parseByte("1")));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        });
+        this.leftSideBar.setActuatorActionEvent((t) -> {
+            byte number = workStation.getNumberOfActuators();
+            Device device = new ActuatorDevice(new ActuatorModel("AT" + number, "Actuator" + number));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        });
+        this.leftSideBar.setSensorActionEvent((t) -> {
+            launchFormSensors();
+        });
+
+        this.leftSideBar.setTrafficActionEvent((t) -> {
+            launchFormTraffic();
+
+        }
+        );
+
+        workStation.setOnMouseClicked((t) -> {
+            imgTraffics.forEach((item)->{
+                workStation.getChildren().remove(item);
+            });
+            imgTraffics.clear();
+
+        });
+    }
+
+
+
+
+    /*-----------------------------------------------------------------------
+     -                                  Events                              -
+     ----------------------------------------------------------------------*/
+
+
+    // Event to delete a device
+    protected EventHandler onDeleteDevice(Device device) {
+        return (t) -> {
+           /* */
+
+            connects.forEach((item)->{
+
+                if ((item.getDevice1()==device) || (item.getDevice2()==device)){
+                    workStation.getChildren().remove(item.getLine());
+                    this.cb = item;
+                    connectsRep.add(item);
+
+                }
+
+            });
+            workStation.getChildren().remove(device);
+
+            connectsRep.forEach((t1)->{
+                connects.remove(t1);
+            });
+
+
+        };
+    }
+
+    // Event to connect two devices
+   protected EventHandler onConnectEvent(Device device) {
+
+        return (t) -> {
+            launchFormStage(device);
+        };
+    }
+
+    private String selectNameDevice(Device deviceN){
+        String nameDev= "";
+        if (deviceN instanceof ServerDevice) {
+            ServerModel model = (ServerModel) ((ServerDevice) deviceN).getModel();
+            nameDev = model.getName();
+
+        } else if (deviceN instanceof SensorDevice) {
+            SensorModel model = (SensorModel) ((SensorDevice) deviceN).getModel();
+            nameDev = model.getName();
+        } else if (deviceN instanceof ActuatorDevice) {
+            ActuatorModel model = (ActuatorModel) ((ActuatorDevice) deviceN).getModel();
+            nameDev = model.getName();
+        }
+
+        return nameDev;
+
+    }
+
+    protected ServerModel trafficServer(){
+        ServerModel model = null;
+        for (Node device : workStation.getChildren()){
+            if (device instanceof ServerDevice) {
+                model = (ServerModel) ((ServerDevice) device).getModel();
+                break;
+            }
+        }
+
+      return model;
+    }
+
+    //ventana modal
+
+    protected void launchFormStage(Device device){
+        ObservableList<String> items = FXCollections.observableArrayList();
+
+        addDestiny(items);
+        removeElementList(items,device);
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(10);
+        gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+
+        //Arranging all the nodes in the grid
+        gridPane.add(new Text("Destiny        "), 0, 0);
+        gridPane.add(cbx = new ComboBox<>(items), 1, 0);
+        gridPane.add(new Text("Latency"), 0, 1);
+        gridPane.add(latencyField, 1, 1);
+
+        Button okBtn = new Button("ok");
+        okBtn.getStyleClass().add("okbtn");
+        okBtn.setOnMouseClicked(this.onOkBtnClicked(device));
+
+        Button cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("cancelbtn");
+        cancelBtn.setOnMouseClicked(this.onCancelBtnClicked());
+
+        HBox btnContainer = new HBox(cancelBtn, okBtn);
+        btnContainer.setSpacing(10);
+        btnContainer.setAlignment(Pos.CENTER_RIGHT);
+        gridPane.add(btnContainer, 1, 3);
+        this.formScene = new Scene(gridPane);
+
+        final Stage primaryStage = (Stage) this.getScene().getWindow();
+        formStage = new Stage();
+        // formStage.setOnCloseRequest(beforeCloseFormStage());
+        formScene.getStylesheets().addAll("file:src/main/resources/style/FormStyle.css");
+        formStage.setScene(formScene);
+        formStage.initModality(Modality.WINDOW_MODAL);
+        formStage.initOwner(primaryStage);
+        formStage.setResizable(false);
+        formStage.setTitle("Connect " + device.getClass().getSimpleName());
+        formStage.showAndWait();
+        formStage.close();
+        items.clear();
+    }
+
+    protected EventHandler onOkBtnClicked(Device device) {
+
+        return event -> {
+            //Device deviceEnd;
+            String valor;
+            this.cable.setDestinyId(this.cbx.getValue());
+            this.cable.setLatency(this.latencyField.getText());
+            //System.out.println(this.cbx.getValue());
+            valor = cbx.getValue();
+
+            workStation.getChildren().forEach((node) -> {
+                if (node instanceof ServerDevice) {
+                    ServerModel model = (ServerModel) ((ServerDevice) node).getModel();
+                    if (model.getName().equals(valor)){
+                        deviceEnd = (Device) node;
+                    }
+
+                } else if (node instanceof SensorDevice) {
+                    SensorModel model = (SensorModel) ((SensorDevice) node).getModel();
+                    if (model.getName().equals(valor)){
+                        deviceEnd = (Device) node;
+                    }
+                } else if (node instanceof ActuatorDevice) {
+                    ActuatorModel model = (ActuatorModel) ((ActuatorDevice) node).getModel();
+                    if (model.getName().equals(valor)){
+                        deviceEnd = (Device) node;
+                    }
+                }
+            });
+
+
+            //Create line
+            Line line = new Line();
+            line.setStroke(Color.RED);
+            line.setStrokeWidth(3);
+
+
+            //Bind the starting point coordinate of the line with the center coordinate of node device
+            line.startXProperty().bind(device.layoutXProperty().add(device.widthProperty().divide(2)));
+            line.startYProperty().bind(device.layoutYProperty().add(device.heightProperty().divide(2)));
+
+            //Bind the end coordinates of the line with the center coordinates of node deviceEnd
+            line.endXProperty().bind(deviceEnd.layoutXProperty().add(deviceEnd.widthProperty().divide(2)));
+            line.endYProperty().bind(deviceEnd.layoutYProperty().add(deviceEnd.heightProperty().divide(2)));
+
+            nameDev1= selectNameDevice(device);
+            nameDev2= selectNameDevice(deviceEnd);
+
+            connects.add(new CableDevice(device,deviceEnd,line, nameDev1, nameDev2, this.latencyField.getText()));
+            workStation.getChildren().add(line);
+
+            this.formStage.close();
+        };
+    }
+
+    // Reset form values if canceled
+    protected EventHandler<MouseEvent> onCancelBtnClicked() {
+        return event -> {
+            this.cbx.setValue(this.cable.getDestinyId());
+            this.latencyField.setText(this.cable.getLatency());
+            this.formStage.close();
+        };
+    }
+
+    protected void launchFormTraffic(){
+
+
+        ObservableList<String> items = FXCollections.observableArrayList();
+        addDestiny(items);
+        //addTraffic(items);
+        //items.stream().distinct();
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(10);
+        gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+
+        //Arranging all the nodes in the grid
+        gridPane.add(new Text("Device        "), 0, 0);
+        gridPane.add(cbx = new ComboBox<>(items), 1, 0);
+        gridPane.add(new Text("# Traffic"), 0, 1);
+        gridPane.add(trafficField, 1, 1);
+
+        Button okBtn = new Button("ok");
+        okBtn.getStyleClass().add("okbtn");
+        okBtn.setOnMouseClicked(this.onOkBtnTrafficClicked());
+
+        Button cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("cancelbtn");
+        cancelBtn.setOnMouseClicked(this.onCancelBtnClicked());
+
+        HBox btnContainer = new HBox(cancelBtn, okBtn);
+        btnContainer.setSpacing(10);
+        btnContainer.setAlignment(Pos.CENTER_RIGHT);
+        gridPane.add(btnContainer, 1, 3);
+        this.formScene = new Scene(gridPane);
+
+        final Stage primaryStage = (Stage) this.getScene().getWindow();
+        formStage = new Stage();
+        // formStage.setOnCloseRequest(beforeCloseFormStage());
+        formScene.getStylesheets().addAll("file:src/main/resources/style/FormStyle.css");
+        formStage.setScene(formScene);
+        formStage.initModality(Modality.WINDOW_MODAL);
+        formStage.initOwner(primaryStage);
+        formStage.setResizable(false);
+        formStage.setTitle("Traffic Devices ");
+        formStage.showAndWait();
+        formStage.close();
+        items.clear();
+       //
+
+
+    }
+
+    private void animation1(ImageView img, Device deviceStart, Device deviceEnd){
+        TranslateTransition tt = new TranslateTransition(Duration.millis(2000));
+        tt.setNode(img);
+        tt.setByX(deviceEnd.getLayoutX() - deviceStart.getLayoutX());
+        tt.setByY(deviceEnd.getLayoutY() - deviceStart.getLayoutY());
+        tt.setInterpolator(Interpolator.LINEAR);
+        tt.setCycleCount(2);
+        tt.setAutoReverse(true);
+        tt.play();
+    }
+
+
+    public void addDestiny(ObservableList<String> items){
+
+        workStation.getChildren().forEach((node) -> {
+            if (node instanceof ServerDevice) {
+                ServerModel model = (ServerModel) ((ServerDevice) node).getModel();
+                items.add(model.getName());
+
+            } else if (node instanceof SensorDevice) {
+                SensorModel model = (SensorModel) ((SensorDevice) node).getModel();
+                items.add(model.getName());
+            } else if (node instanceof ActuatorDevice) {
+                ActuatorModel model = (ActuatorModel) ((ActuatorDevice) node).getModel();
+                items.add(model.getName());
+            }
+        });
+
+    }
+
+
+    protected EventHandler onOkBtnTrafficClicked() {
+        //final int[] i = {1};
+        //System.out.println("Node" + i[0]);
+        return event -> {
+            slots.add(Integer.parseInt(trafficField.getText()));
+            String valDevice;
+            valDevice = cbx.getValue();
+            ArrayList<Device> mList = new ArrayList<>();
+            connects.forEach((item)->{
+                mList.add(item.getDevice1());
+                mList.add(item.getDevice2());
+            });
+
+
+            Device deviceTraf = devInstance(valDevice);
+            int countA=Collections.frequency(mList, deviceTraf);
+            if (countA!=0){
+                connects.forEach((itDev)->{
+                    if (itDev.getDevice1()==deviceTraf){
+
+                        this.traffic = this.trafficField.getText();
+                        //System.out.printf("%s\n",this.traffic);
+                        ImageView rect = new ImageView("file:src/main/resources/image/email1.png");
+                        imgTraffics.add(rect);
+                        rect.setX(itDev.getDevice1().getLayoutX());
+                        rect.setY(itDev.getDevice1().getLayoutY());
+
+                        this.trimg = rect;
+                        workStation.getChildren().add(rect);
+
+                        /***********/
+                        animation1(rect, itDev.getDevice1(), itDev.getDevice2());
+
+
+                    }
+
+                    if (itDev.getDevice2()==deviceTraf){
+                        this.traffic = this.trafficField.getText();
+                        //System.out.printf("%s\n",this.traffic);
+                        ImageView rect = new ImageView("file:src/main/resources/image/email1.png");
+                        imgTraffics.add(rect);
+                        rect.setX(itDev.getDevice2().getLayoutX());
+                        rect.setY(itDev.getDevice2().getLayoutY());
+
+                        this.trimg = rect;
+
+                        workStation.getChildren().add(rect);
+
+                        /***********/
+                        animation1(rect, itDev.getDevice2(), itDev.getDevice1());
+                    }
+
+                });
+
+            }else{
+                System.out.println("Device is not in traffic");
+            }
+            trafficField.setText("");
+            this.formStage.close();
+        };
+    }
+
+    public Device devInstance(String nameDev){
+        Device devTr=null;
+        for (Node node:workStation.getChildren()){
+            if (node instanceof ServerDevice) {
+                ServerModel model = (ServerModel) ((ServerDevice) node).getModel();
+                if (model.getName().equals(nameDev)){
+                    devTr = (Device) node;
+                    break;
+                }
+
+            } else if (node instanceof SensorDevice) {
+                SensorModel model = (SensorModel) ((SensorDevice) node).getModel();
+                if (model.getName().equals(nameDev)){
+                    devTr = (Device) node;
+                    break;
+                }
+            } else if (node instanceof ActuatorDevice) {
+                ActuatorModel model = (ActuatorModel) ((ActuatorDevice) node).getModel();
+                if (model.getName().equals(nameDev)){
+                    devTr = (Device) node;
+                    break;
+                }
+            }
+        }
+
+        return devTr;
+    }
+
+    public void removeElementList(ObservableList<String> items,Device device){
+        if (device instanceof ServerDevice) {
+            ServerModel model = (ServerModel) ((ServerDevice) device).getModel();
+            //cable.setName(model.getName());
+            items.remove(model.getName());
+        } else if (device instanceof SensorDevice) {
+            SensorModel model = (SensorModel) ((SensorDevice) device).getModel();
+            items.remove(model.getName());
+            //cable.setName(model.getName());
+        } else if (device instanceof ActuatorDevice) {
+            ActuatorModel model = (ActuatorModel) ((ActuatorDevice) device).getModel();
+            items.remove(model.getName());
+            //cable.setName(model.getName());
+        }
+    }
+
+    /*
+     *  Menu Options Sensor Devices
+     */
+
+    protected void launchFormSensors(){
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(10);
+        gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+
+        //Arranging all the nodes in the grid
+        gridPane.add(new Text("Home        "), 0, 0);
+        gridPane.add(btnAirPurifier, 0, 1);
+        btnAirPurifier.setTooltip(new Tooltip("Air Purifier"));
+        gridPane.add(btnCameraHome, 1, 1);
+        btnCameraHome.setTooltip(new Tooltip("Camera Home"));
+        gridPane.add(btnMotionSensor, 2, 1);
+        btnMotionSensor.setTooltip(new Tooltip("Motion Sensor"));
+        gridPane.add(btnLightSensor, 3, 1);
+        btnLightSensor.setTooltip(new Tooltip("Light Sensor"));
+
+
+
+        gridPane.add(new Text("City        "), 0, 2);
+        gridPane.add(btnFingerPrint, 0, 3);
+        btnFingerPrint.setTooltip(new Tooltip("Finger Print Scan"));
+
+
+        gridPane.add(new Text("Health        "), 0, 4);
+        gridPane.add(btnCardiogram, 0, 5);
+        btnCardiogram.setTooltip(new Tooltip("ECG Monitor"));
+        gridPane.add(btnPulseOximeter, 1, 5);
+        btnPulseOximeter.setTooltip(new Tooltip("Pulse Oximeter"));
+        gridPane.add(btnGlucometer, 2, 5);
+        btnGlucometer.setTooltip(new Tooltip("Glucometer"));
+        gridPane.add(btnSmartTemperature, 3, 5);
+        btnSmartTemperature.setTooltip(new Tooltip("Smart Temperature"));
+        gridPane.add(btnSmartwatch, 4, 5);
+        btnSmartwatch.setTooltip(new Tooltip("Smartwatch"));
+
+        gridPane.add(new Text("Agriculture        "), 0, 6);
+        gridPane.add(btnLightMeter, 0, 7);
+        btnLightMeter.setTooltip(new Tooltip("Light Meter"));
+
+        gridPane.add(new Text("Transport        "), 0, 9);
+        gridPane.add(btnDriverlessCar, 0, 10);
+        btnDriverlessCar.setTooltip(new Tooltip("DriverlessCar"));
+        gridPane.add(btnChargingStation, 1, 10);
+        btnChargingStation.setTooltip(new Tooltip("Charging Station"));
+
+        //buttons event
+        btnAirPurifier.setOnMouseClicked(this.onAirPurifierBtnClicked());
+        btnCameraHome.setOnMouseClicked(this.onCameraHomeBtnClicked());
+        btnMotionSensor.setOnMouseClicked(this.onMotionSensorBtnClicked());
+        btnLightSensor.setOnMouseClicked(this.onLightSensorBtnClicked());
+        btnFingerPrint.setOnMouseClicked(this.onFingerPrintBtnClicked());
+        btnCardiogram.setOnMouseClicked(this.onCardiogramBtnClicked());
+        btnPulseOximeter.setOnMouseClicked(this.onPulseOximeterBtnClicked());
+        btnGlucometer.setOnMouseClicked(this.onGlucometerBtnClicked());
+        btnSmartTemperature.setOnMouseClicked(this.onSmartTemperatureBtnClicked());
+        btnSmartwatch.setOnMouseClicked(this.onbtnSmartwatchBtnClicked());
+        btnLightMeter.setOnMouseClicked(this.onLightMeterBtnClicked());
+        btnDriverlessCar.setOnMouseClicked(this.onDriverlessCarBtnClicked());
+        btnChargingStation.setOnMouseClicked(this.onChargingStationBtnClicked());
+
+
+        this.formScene = new Scene(gridPane);
+
+        final Stage primaryStage = (Stage) this.getScene().getWindow();
+        formStage = new Stage();
+        // formStage.setOnCloseRequest(beforeCloseFormStage());
+        formScene.getStylesheets().addAll("file:src/main/resources/style/FormStyle.css");
+        formStage.setScene(formScene);
+        formStage.initModality(Modality.WINDOW_MODAL);
+        formStage.initOwner(primaryStage);
+        formStage.setResizable(false);
+        formStage.setTitle("Sensor Devices" );
+        formStage.showAndWait();
+        formStage.close();
+
+    }
+
+
+    /**
+     *          EVENTS BUTTONS, CREATE SENSOR DEVICES
+     * @return
+     */
+
+
+    protected EventHandler<MouseEvent> onCameraHomeBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,1 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/cctv.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+    protected EventHandler<MouseEvent> onAirPurifierBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,2 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/air-purifier.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+    protected EventHandler<MouseEvent> onMotionSensorBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,3 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/motion-sensor.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+
+    protected EventHandler<MouseEvent> onLightSensorBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,4 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/light-sensor.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+
+    protected EventHandler<MouseEvent> onFingerPrintBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,5 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/fingerprint.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+    protected EventHandler<MouseEvent> onCardiogramBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,6 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageResource(Resource.CARDIOGRAM));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+    protected EventHandler<MouseEvent> onPulseOximeterBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,7 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/pulse-oximeter.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+
+    protected EventHandler<MouseEvent> onGlucometerBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,8 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/glucometer.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+    protected EventHandler<MouseEvent> onSmartTemperatureBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,9 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/smart-temperature.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+    protected EventHandler<MouseEvent> onbtnSmartwatchBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,10 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/smartwatch.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+    protected EventHandler<MouseEvent> onLightMeterBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,11 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/light-meter.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+    protected EventHandler<MouseEvent> onDriverlessCarBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,12 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/driverless-car.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+    protected EventHandler<MouseEvent> onChargingStationBtnClicked() {
+        return event -> {
+            byte number = workStation.getNumberOfSensors();
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,13 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/charging-station.png"));
+            device.setOnConnectEvent(onConnectEvent(device));
+            device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+        };
+    }
+
+}

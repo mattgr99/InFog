@@ -5,6 +5,7 @@ import com.perdiz.neblina.util.Console;
 import java.util.*;
 
 public class TrafficHeuristc {
+    private Hashtable<Integer, ArrayList> vmTurnOn;
     private int Delta;  // slot duration (s)
     private int Ns;     //Number of physical server
     private int M_max;  //Maximum number of Vms per physical servers
@@ -25,8 +26,10 @@ public class TrafficHeuristc {
     private double k_e;
     private double x;
     private double delta_shaping_factor;
+    private double outputEnergy_server;
 
     public TrafficHeuristc(int vms, int cin){
+        this.vmTurnOn = new Hashtable<>();
         this.Delta = 1;
         this.Ns = 1;
         this.M_max = vms;
@@ -41,8 +44,8 @@ public class TrafficHeuristc {
             int rnumber = (int)(Math.random()*(450-5+1)+5);
             this.E_idle.add(rnumber);
         }*/
-        this.SS= 0;
-        this.m=1;
+        this.SS= 1;
+        this.m=0;
         this.v=2;
         this.k_e = 0 * Math.pow(10,-5);
         this.f_zero = 0;
@@ -51,6 +54,7 @@ public class TrafficHeuristc {
         this.y= 0;
         this.x = 0.0;
         this.delta_shaping_factor = Math.pow(10,-2);
+        this.outputEnergy_server= 0.0;
 
 
     }
@@ -90,7 +94,7 @@ public class TrafficHeuristc {
             System.out.println("Traffic "+ cin1.get(i));
             if(cin1.get(i) > (this.Ns * this.M_max * f_max * (this.Delta - this.T_on_server - this.T_on_vm))){
                 System.out.println("Consolidation unfeasible at slot " + cin1.get(i));
-                System.out.println(" " + (this.Ns * this.M_max * f_max * (this.Delta - this.T_on_server - this.T_on_vm)));
+               // System.out.println(" " + (this.Ns * this.M_max * f_max * (this.Delta - this.T_on_server - this.T_on_vm)));
                 continue;
             }
 
@@ -108,7 +112,6 @@ public class TrafficHeuristc {
                         int total = ramVM.get(j) - cin1.get(i);
                         trfAccept.put(j, total);
                     }
-
 
                 }
             }
@@ -228,7 +231,6 @@ public class TrafficHeuristc {
             }
 
 
-
             System.out.println("");
             time_end = System.currentTimeMillis();
             System.out.println("The task has taken "+ ( time_end - time_start ) +" ms");
@@ -253,25 +255,57 @@ public class TrafficHeuristc {
             //random numbers between 5 and 450
             //this.E_idle solo cuando esta prendido la vm
            // this.E_idle = (int)(Math.random()*(450-5+1)+5);
-            this.E_idle = 25;
-            this.f_zero = cin1.get(i)/(this.m * (this.Delta - this.T_on_server - this.T_on_vm));
-            this.l_zero = cin1.get(i)/this.m;
+            //this.E_idle = 25;
+            //this.f_zero = cin1.get(i)/(this.m * (this.Delta - this.T_on_server - this.T_on_vm));
+            //this.l_zero = cin1.get(i)/this.m;
            /* this.x = this.E_idle + (this.SS + 1)*((this.E_max - this.E_idle)/this.M_max)*(Math.pow(this.f_zero/this.f_max,this.v)) +
                     (this.SS + 1) * this.k_e * (Math.pow(this.f_zero - this.y,2));       //vedo se mi conviene mettere la VM sul k-esimo server
 */
             //energia total
-            this.x =  (((2/(1 + Math.exp(0/this.delta_shaping_factor)) - 1)* 2/(1 + Math.exp(0/this.delta_shaping_factor)) - 1))*
+           /* this.x =  (((2/(1 + Math.exp(0/this.delta_shaping_factor)) - 1)* 2/(1 + Math.exp(0/this.delta_shaping_factor)) - 1))*
                     (E_idle + (this.SS*((this.E_max - this.E_idle)/this.M_max)*(Math.pow(f_zero/f_max,v))) +
-                            this.SS * this.k_e *(Math.pow(this.f_zero - y,2)));
-
+                            this.SS * this.k_e *(Math.pow(this.f_zero - this.y,2)));
+*/
 
 /*
 ----------------------------------------------------------------------------------------------
  */
         }
 
-        System.out.println("Cost server: " + this.x);
+        this.vmTurnOn = trfList;
+        //System.out.println("Cost server: " + this.x);
         System.out.println("--------------------------------");
+
+    }
+
+    public void energyServer(){
+
+        //ArrayList<Double>
+        int workload = 0;
+        for (Map.Entry<Integer, ArrayList> von : vmTurnOn.entrySet()){
+
+
+            ArrayList<Integer> serverOn = von.getValue();
+            if(serverOn.get(0)==1){
+                this.m++;
+                for(int i = 1; i< serverOn.size(); i++){
+                    workload = workload + serverOn.get(i);
+                }
+
+            }
+        }
+        //System.out.println(m);
+        //System.out.println(workload);
+        this.f_zero = workload/(this.m * (this.Delta - this.T_on_server - this.T_on_vm));
+        this.E_idle = 25;
+        this.outputEnergy_server = (2/(1 + Math.exp(-(this.SS)/this.delta_shaping_factor)) - 1) * ((this.E_idle + this.SS *(( this.E_max - this.E_idle)/this.M_max)*
+                (Math.pow(f_zero/f_max,v)) + this.k_e * this.SS * (Math.pow(this.f_zero - this.y,2))));
+
+        System.out.println("Energy Server");
+        System.out.println("");
+        System.out.println(this.outputEnergy_server);
+        this.m = 0;
+
 
     }
 }

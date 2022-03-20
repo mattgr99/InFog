@@ -37,7 +37,8 @@ public class ToolBar extends ToolBarController {
                 openBtn,
                 saveBtn,
                 new Separator(Orientation.VERTICAL),
-                playBtn
+                playBtn,
+                playRandomBtn
         );
         FontIcon icon = new FontIcon(Themify.LAYOUT_SIDEBAR_LEFT);
         icon.setIconSize(20);

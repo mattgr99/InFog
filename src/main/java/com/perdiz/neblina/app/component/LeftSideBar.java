@@ -27,7 +27,9 @@ public class LeftSideBar extends LeftSideBarController {
                 fogServerBtn,
                 actuatorBtn,
                 sensorBtn,
-                trafficBtn
+                trafficBtn,
+                trafficRanBtn,
+                chartBarBtn
         ));
 
     }

@@ -25,6 +25,8 @@ public class LeftSideBarController extends VBox {
     protected JFXButton actuatorBtn = new JFXButton("", new ImageResource(Resource.ACTUATORLIGHT));
     protected JFXButton sensorBtn = new JFXButton("", new ImageResource(Resource.SENSORLIGHT));
     protected JFXButton trafficBtn = new JFXButton("", new ImageView("file:src/main/resources/image/email1.png"));
+    protected JFXButton trafficRanBtn = new JFXButton("", new ImageView("file:src/main/resources/image/cartab.png"));
+    protected JFXButton chartBarBtn = new JFXButton("", new ImageView("file:src/main/resources/image/bar-graph.png"));
 
     public LeftSideBarController() {
         this.cloudServerBtn.setTooltip(new Tooltip("Cloud Server"));
@@ -32,6 +34,8 @@ public class LeftSideBarController extends VBox {
         this.sensorBtn.setTooltip(new Tooltip("Sensor"));
         this.actuatorBtn.setTooltip(new Tooltip("Actuator"));
         this.trafficBtn.setTooltip(new Tooltip("Traffic"));
+        this.trafficRanBtn.setTooltip(new Tooltip("Traffic Random"));
+        this.chartBarBtn.setTooltip(new Tooltip("Bar Chart"));
 
     }
 
@@ -53,5 +57,13 @@ public class LeftSideBarController extends VBox {
 
     public void setTrafficActionEvent(EventHandler<MouseEvent> sensorActionEvent) {
         this.trafficBtn.setOnMouseClicked(sensorActionEvent);
+    }
+
+    public void setTrafficRanActionEvent(EventHandler<MouseEvent> sensorActionEvent) {
+        this.trafficRanBtn.setOnMouseClicked(sensorActionEvent);
+    }
+
+    public void setChartBarBtnEvent(EventHandler<MouseEvent> sensorActionEvent) {
+        this.chartBarBtn.setOnMouseClicked(sensorActionEvent);
     }
 }

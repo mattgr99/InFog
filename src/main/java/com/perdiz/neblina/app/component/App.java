@@ -14,7 +14,9 @@ import com.perdiz.neblina.app.controller.AppController;
 import com.perdiz.neblina.app.iu.Device;
 import com.perdiz.neblina.app.resource.ImageResource;
 import com.perdiz.neblina.app.resource.Resource;
+import com.perdiz.neblina.heuristics.DeviceTraffic;
 import com.perdiz.neblina.heuristics.TrafficHeuristc;
+import com.perdiz.neblina.heuristics.TrafficRandomHeuristc;
 import com.perdiz.neblina.model.*;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
@@ -39,10 +41,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 //import javafx.animation.transition.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -62,17 +61,25 @@ public class App extends AppController {
     protected Scene formScene;
     protected TextField latencyField;
     protected TextField trafficField;
+    protected TextField trafficRField1;
+    protected TextField trafficRField2;
+    protected TextField timeExeField;
+    protected TextField timeDeviceField;
     protected CableModel cable;
     protected Device deviceEnd;
     ArrayList<CableDevice> connects = new ArrayList<CableDevice>();
     ArrayList<CableDevice> connectsRep = new ArrayList<CableDevice>();
     ArrayList<Integer> slots = new ArrayList<Integer>();
+    Hashtable<String, DeviceTraffic> trfDevice = new Hashtable<String, DeviceTraffic>();
+
     CableDevice cb = new CableDevice();
     ImageView trimg = new ImageView("file:src/main/resources/image/email1.png");
     ArrayList<ImageView> imgTraffics = new ArrayList<ImageView>();
     String nameDev1;
     String nameDev2;
     String traffic;
+    int timeTraffic;
+    Boolean isSetTime = false;
 
     //protected
     protected ComboBox<String> cbx;
@@ -110,6 +117,10 @@ public class App extends AppController {
         workStationScroll.setFitToWidth(true);
         this.latencyField = new TextField("");
         this.trafficField = new TextField("");
+        this.timeExeField = new TextField("");
+        this.trafficRField1 = new TextField("");
+        this.trafficRField2 = new TextField("");
+        this.timeDeviceField = new TextField("");
         this.setTop(toolBar);
         this.setLeft(leftSideBar);
         this.setCenter(workStationScroll);
@@ -158,7 +169,126 @@ public class App extends AppController {
             }
 
             tf.calcLoadServer(slots, rmvms);
+            tf.energyServer();
             slots.clear();
+        });
+
+
+        this.toolBar.setOnPlayRandomActionEvent((t) -> {
+
+            launchFormRandomPlay();
+
+            if (isSetTime){
+                this.isSetTime =false;
+                int stopTime = this.timeTraffic;
+                Timer timer = new Timer();
+                ServerModel model = trafficServer();
+                ArrayList<Integer> rmvms = new ArrayList<Integer>();
+                //ArrayList<Integer> timtr = new ArrayList<Integer>();
+                ArrayList<String> nameSensors = new ArrayList<String>();
+                ArrayList<TrafficRandomHeuristc> trsend = new ArrayList<TrafficRandomHeuristc>();
+                Hashtable<Integer, ArrayList> finalDisTrf = new Hashtable<>();
+                int nsen = trafficSensor();
+                nameSensors = nameSensor();
+
+                /*for(int rv1=0; rv1<nsen; rv1++){
+                    timtr.add((int)(Math.random()*(10-1+1)+1));
+                }*/
+
+                for(int rv: model.getRamVM()){
+                    rmvms.add(rv);
+                }
+
+                for(int tf1=0; tf1 < rmvms.size(); tf1++){
+                    ArrayList<Integer> baltr = new ArrayList<>();
+                    baltr.add(0);
+                    finalDisTrf.put(tf1,baltr);
+                }
+
+
+
+                for(int exe=0; exe<nsen; exe++){
+                    if(this.trfDevice.get(nameSensors.get(exe)) == null){
+                        continue;
+                    }
+                    DeviceTraffic dvt = this.trfDevice.get(nameSensors.get(exe));
+                    TrafficRandomHeuristc ner1 = new TrafficRandomHeuristc((int)model.getVmachines(), rmvms, dvt.getTime(), nameSensors.get(exe),finalDisTrf, dvt.getFirstInterval(), dvt.getSecondInterval());
+                    trsend.add(ner1);
+                }
+
+                Enumeration<String> ekey = this.trfDevice.keys();
+                ekey = this.trfDevice.keys();
+                while(ekey.hasMoreElements()){
+                    this.trfDevice.remove(ekey.nextElement());
+                }
+
+                ArrayList<String> finalNameSensors = nameSensors;
+
+                //Hashtable<Integer, ArrayList> finalDisTrf1 = finalDisTrf;
+                TimerTask tarea = new TimerTask() {
+                    private int count = 0;
+                    boolean startP = true;
+
+                    @Override
+                    public void run() {
+
+                        if (startP){
+                            for (TrafficRandomHeuristc sensor : trsend){
+                                sensor.start();
+                            }
+                            startP = false;
+                        }
+
+                        if (count > 0 ){
+                            if ((count%5) == 0){
+                                //System.out.println((count%5) );
+                                for (TrafficRandomHeuristc sensor : trsend){
+                                    //sensor.setFnPr(true);
+                                    sensor.suspend();
+                                }
+                                TrafficRandomHeuristc.resetServer(rmvms, finalDisTrf);
+                                //trsend.clear();
+                            /*for(int exe=0; exe<nsen; exe++){
+                                TrafficRandomHeuristc ner1 = new TrafficRandomHeuristc((int)model.getVmachines(), rmvms, timtr.get(exe), finalNameSensors.get(exe));
+                                trsend.add(ner1);
+                            }*/
+
+                                for (TrafficRandomHeuristc sensor : trsend){
+                                    sensor.resume();
+                                    //sensor.setFnPr(false);
+                                }
+
+                            }
+                        }
+
+
+
+
+                        if (count == stopTime){
+
+
+                            for (TrafficRandomHeuristc sensor : trsend){
+                                sensor.setFnPr(true);
+                                sensor.stop();
+
+
+                            }
+                            //System.out.println("Terminado "+ TrafficRandomHeuristc.alt11);
+                            System.out.println("");
+                            cancel();
+
+                            System.out.println("*********** Process completed ***********");
+
+
+                        }
+                        count++;
+
+
+                    }
+                };
+                timer.schedule(tarea, 0,    1000);
+
+            }
         });
 
         this.toolBar.setOnshowRightBarActionEvent((t) -> {
@@ -195,8 +325,13 @@ public class App extends AppController {
         this.leftSideBar.setTrafficActionEvent((t) -> {
             launchFormTraffic();
 
-        }
-        );
+        });
+
+
+        this.leftSideBar.setTrafficRanActionEvent((t) -> {
+            launchFormRandomTraffic();
+
+        });
 
         workStation.setOnMouseClicked((t) -> {
             imgTraffics.forEach((item)->{
@@ -276,6 +411,34 @@ public class App extends AppController {
         }
 
       return model;
+    }
+
+    protected int trafficSensor(){
+        String nameSen = null;
+        int sen = 0;
+        for (Node device : workStation.getChildren()){
+            if (device instanceof SensorDevice) {
+                sen++;
+            }
+        }
+
+        return sen;
+    }
+
+
+    protected ArrayList<String> nameSensor(){
+
+        ArrayList<String>namesS= new ArrayList<String>();
+        String nameSen = null;
+
+        for (Node device : workStation.getChildren()){
+            if (device instanceof SensorDevice) {
+                nameSen = (String) ((SensorDevice) device).getModel().getName();
+                namesS.add(nameSen);
+            }
+        }
+
+        return namesS;
     }
 
     //ventana modal
@@ -390,6 +553,21 @@ public class App extends AppController {
         };
     }
 
+    protected EventHandler<MouseEvent> onCancelRandomTrfBtnClicked() {
+        return event -> {
+            //this.cbx.setValue(this.cable.getDestinyId());
+            //this.latencyField.setText(this.cable.getLatency());
+            this.formStage.close();
+        };
+    }
+
+    protected EventHandler<MouseEvent> onCancelRandomBtnClicked(){
+        return event -> {
+          this.timeExeField.setText("");
+            this.formStage.close();
+        };
+    }
+
     protected void launchFormTraffic(){
 
 
@@ -437,6 +615,110 @@ public class App extends AppController {
         formStage.close();
         items.clear();
        //
+
+
+    }
+
+    protected void launchFormRandomTraffic(){
+
+
+        ObservableList<String> items = FXCollections.observableArrayList();
+        addDestiny(items);
+        //addTraffic(items);
+        //items.stream().distinct();
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(10);
+        gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+        //trafficRField1.setPrefWidth(30);
+        //trafficRField2.setPrefWidth(120);
+        //trafficRField1.setMaxWidth(40);
+        //trafficRField2.setMaxWidth(40);
+        //Arranging all the nodes in the grid
+        gridPane.add(new Text("Device        "), 0, 0);
+        gridPane.add(cbx = new ComboBox<>(items), 1, 0);
+        gridPane.add(new Text("# Set Traffic"), 0, 1);
+
+        gridPane.add(trafficRField1, 1, 1);
+        gridPane.add(new Text("-"), 2, 1);
+        gridPane.add(trafficRField2, 3, 1);
+
+        gridPane.add(new Text("# Set Time (sec)"), 0, 2);
+        gridPane.add(timeDeviceField, 1, 2);
+        gridPane.add(new Text(""), 0, 3);
+
+        Button okBtn = new Button("ok");
+        okBtn.getStyleClass().add("okbtn");
+        okBtn.setOnMouseClicked(this.onOkBtnTrafficRandomClicked());
+
+        Button cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("cancelbtn");
+        cancelBtn.setOnMouseClicked(this.onCancelBtnClicked());
+
+        HBox btnContainer = new HBox(cancelBtn, okBtn);
+        btnContainer.setSpacing(10);
+        btnContainer.setAlignment(Pos.CENTER_RIGHT);
+        gridPane.add(btnContainer, 1, 3);
+        this.formScene = new Scene(gridPane);
+
+        final Stage primaryStage = (Stage) this.getScene().getWindow();
+        formStage = new Stage();
+        // formStage.setOnCloseRequest(beforeCloseFormStage());
+        formScene.getStylesheets().addAll("file:src/main/resources/style/FormStyle.css");
+        formStage.setScene(formScene);
+        formStage.initModality(Modality.WINDOW_MODAL);
+        formStage.initOwner(primaryStage);
+        formStage.setResizable(false);
+        formStage.setTitle("Traffic Devices Random");
+        formStage.showAndWait();
+        formStage.close();
+        items.clear();
+        //
+
+
+    }
+
+    protected void launchFormRandomPlay(){
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(10);
+        gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+
+        //Arranging all the nodes in the grid
+        gridPane.add(new Text("# Set Time Execution (min)"), 0, 1);
+        gridPane.add(timeExeField, 1, 1);
+
+        Button okBtn = new Button("ok");
+        okBtn.getStyleClass().add("okbtn");
+        okBtn.setOnMouseClicked(this.onOkBtnRandomPlayClicked());
+
+        Button cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("cancelbtn");
+        cancelBtn.setOnMouseClicked(this.onCancelRandomBtnClicked());
+
+        HBox btnContainer = new HBox(cancelBtn, okBtn);
+        btnContainer.setSpacing(10);
+        btnContainer.setAlignment(Pos.CENTER_RIGHT);
+        gridPane.add(btnContainer, 1, 3);
+        this.formScene = new Scene(gridPane);
+
+        final Stage primaryStage = (Stage) this.getScene().getWindow();
+        formStage = new Stage();
+        // formStage.setOnCloseRequest(beforeCloseFormStage());
+        formScene.getStylesheets().addAll("file:src/main/resources/style/FormStyle.css");
+        formStage.setScene(formScene);
+        formStage.initModality(Modality.WINDOW_MODAL);
+        formStage.initOwner(primaryStage);
+        formStage.setResizable(false);
+        formStage.setTitle("Traffic Random Devices ");
+        formStage.showAndWait();
+        formStage.close();
+
+        //
 
 
     }
@@ -528,10 +810,89 @@ public class App extends AppController {
 
             }else{
                 System.out.println("Device is not in traffic");
+                slots.remove(Integer.parseInt(trafficField.getText()));
             }
             trafficField.setText("");
             this.formStage.close();
         };
+    }
+
+    protected EventHandler onOkBtnTrafficRandomClicked() {
+        //final int[] i = {1};
+        //System.out.println("Node" + i[0]);
+        return event -> {
+            //slots.add(Integer.parseInt(trafficField.getText()));
+            DeviceTraffic dvt = new DeviceTraffic(Integer.parseInt(this.trafficRField1.getText()),Integer.parseInt(this.trafficRField2.getText()), Integer.parseInt(this.timeDeviceField.getText()));
+            String valDevice;
+            valDevice = cbx.getValue();
+            this.trfDevice.put(valDevice,dvt);
+
+            //System.out.println(trfDevice);
+            ArrayList<Device> mList = new ArrayList<>();
+            connects.forEach((item)->{
+                mList.add(item.getDevice1());
+                mList.add(item.getDevice2());
+            });
+
+
+            Device deviceTraf = devInstance(valDevice);
+            int countA=Collections.frequency(mList, deviceTraf);
+            if (countA!=0){
+                connects.forEach((itDev)->{
+                    if (itDev.getDevice1()==deviceTraf){
+
+                        this.traffic = this.trafficField.getText();
+                        //System.out.printf("%s\n",this.traffic);
+                        ImageView rect = new ImageView("file:src/main/resources/image/digital.png");
+                        imgTraffics.add(rect);
+                        rect.setX(itDev.getDevice1().getLayoutX());
+                        rect.setY(itDev.getDevice1().getLayoutY());
+
+                        this.trimg = rect;
+                        workStation.getChildren().add(rect);
+
+                        /***********/
+                        animation1(rect, itDev.getDevice1(), itDev.getDevice2());
+
+
+                    }
+
+                    if (itDev.getDevice2()==deviceTraf){
+                        this.traffic = this.trafficField.getText();
+                        //System.out.printf("%s\n",this.traffic);
+                        ImageView rect = new ImageView("file:src/main/resources/image/digital.png");
+                        imgTraffics.add(rect);
+                        rect.setX(itDev.getDevice2().getLayoutX());
+                        rect.setY(itDev.getDevice2().getLayoutY());
+
+                        this.trimg = rect;
+
+                        workStation.getChildren().add(rect);
+
+                        /***********/
+                        animation1(rect, itDev.getDevice2(), itDev.getDevice1());
+                    }
+
+                });
+
+            }else{
+                System.out.println("Device is not in traffic");
+                this.trfDevice.remove(valDevice);
+            }
+            trafficRField1.setText("");
+            trafficRField2.setText("");
+            timeDeviceField.setText("");
+            this.formStage.close();
+        };
+    }
+
+    protected EventHandler onOkBtnRandomPlayClicked(){
+        return event -> {
+            this.timeTraffic = (Integer.parseInt(timeExeField.getText())) * 60;
+            this.isSetTime =true;
+            this.formStage.close();
+        };
+
     }
 
     public Device devInstance(String nameDev){

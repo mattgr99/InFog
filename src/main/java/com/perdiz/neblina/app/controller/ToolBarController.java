@@ -27,6 +27,7 @@ public class ToolBarController extends ToolBar {
     protected Button openBtn;
 
     protected Button playBtn;
+    protected Button playRandomBtn;
 
     public ToolBarController() {
         showRightPanelBtn = new Button("", new FontIcon(Themify.LAYOUT_SIDEBAR_RIGHT));
@@ -35,6 +36,7 @@ public class ToolBarController extends ToolBar {
         saveBtn = new Button("", new FontIcon(FontAwesome.SAVE));
         openBtn = new Button("", new FontIcon(FontAwesome.FOLDER_OPEN_O));
         playBtn = new Button("", new FontIcon(FontAwesome.PLAY));
+        playRandomBtn = new Button("", new FontIcon(FontAwesome.RANDOM));
 
     }
 
@@ -61,6 +63,11 @@ public class ToolBarController extends ToolBar {
 
     public void setOnPlayActionEvent(EventHandler<MouseEvent> playAction) {
         this.playBtn.setOnMouseClicked(playAction);
+
+    }
+
+    public void setOnPlayRandomActionEvent(EventHandler<MouseEvent> playRandomAction) {
+        this.playRandomBtn.setOnMouseClicked(playRandomAction);
 
     }
 

@@ -29,7 +29,9 @@ public class LeftSideBar extends LeftSideBarController {
                 sensorBtn,
                 trafficBtn,
                 trafficRanBtn,
-                chartBarBtn
+                chartBarBtn,
+                chartLineVmBtn,
+                chartLineTrBtn
         ));
 
     }

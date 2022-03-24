@@ -14,6 +14,8 @@ import com.perdiz.neblina.app.controller.AppController;
 import com.perdiz.neblina.app.iu.Device;
 import com.perdiz.neblina.app.resource.ImageResource;
 import com.perdiz.neblina.app.resource.Resource;
+import com.perdiz.neblina.charts.BarChartTraffic;
+import com.perdiz.neblina.charts.LineChartTraffic;
 import com.perdiz.neblina.heuristics.DeviceTraffic;
 import com.perdiz.neblina.heuristics.TrafficHeuristc;
 import com.perdiz.neblina.heuristics.TrafficRandomHeuristc;
@@ -27,10 +29,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -179,6 +183,9 @@ public class App extends AppController {
             launchFormRandomPlay();
 
             if (isSetTime){
+                TrafficRandomHeuristc.vms_on.clear();
+                TrafficRandomHeuristc.slots.clear();
+                TrafficRandomHeuristc.energyServer.clear();
                 this.isSetTime =false;
                 int stopTime = this.timeTraffic;
                 Timer timer = new Timer();
@@ -246,7 +253,7 @@ public class App extends AppController {
                                     //sensor.setFnPr(true);
                                     sensor.suspend();
                                 }
-                                TrafficRandomHeuristc.resetServer(rmvms, finalDisTrf);
+                                TrafficRandomHeuristc.resetServer(rmvms);
                                 //trsend.clear();
                             /*for(int exe=0; exe<nsen; exe++){
                                 TrafficRandomHeuristc ner1 = new TrafficRandomHeuristc((int)model.getVmachines(), rmvms, timtr.get(exe), finalNameSensors.get(exe));
@@ -270,8 +277,6 @@ public class App extends AppController {
                             for (TrafficRandomHeuristc sensor : trsend){
                                 sensor.setFnPr(true);
                                 sensor.stop();
-
-
                             }
                             //System.out.println("Terminado "+ TrafficRandomHeuristc.alt11);
                             System.out.println("");
@@ -331,6 +336,44 @@ public class App extends AppController {
         this.leftSideBar.setTrafficRanActionEvent((t) -> {
             launchFormRandomTraffic();
 
+        });
+
+        this.leftSideBar.setChartBarBtnEvent((t) -> {
+
+            BarChartTraffic chartTraffic = new BarChartTraffic(TrafficRandomHeuristc.energyServer);
+            try {
+                chartTraffic.start(new Stage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+           // TrafficRandomHeuristc.energyServer.clear();
+
+        });
+
+        this.leftSideBar.setChartLineVmBtnEvent((t) -> {
+
+            LineChartTraffic lineTraffic = new LineChartTraffic(TrafficRandomHeuristc.vms_on, "Time(sec)", "# VM - ON", "Virtual Machines turned on", "VM", true);
+            try {
+                lineTraffic.start(new Stage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+           // TrafficRandomHeuristc.vms_on.clear();
+
+        });
+
+        this.leftSideBar.setChartLineTrBtnEvent((t) -> {
+
+            LineChartTraffic lineTraffic = new LineChartTraffic(TrafficRandomHeuristc.slots, "Slot Time (sec)", "# OF ARRIVAL PER SLOT", "Trace of I/O arrival data", "Slot", false);
+            try {
+                lineTraffic.start(new Stage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //TrafficRandomHeuristc.slots.clear();
         });
 
         workStation.setOnMouseClicked((t) -> {
@@ -642,7 +685,7 @@ public class App extends AppController {
         gridPane.add(new Text("# Set Traffic"), 0, 1);
 
         gridPane.add(trafficRField1, 1, 1);
-        gridPane.add(new Text("-"), 2, 1);
+        gridPane.add(new Text("to"), 2, 1);
         gridPane.add(trafficRField2, 3, 1);
 
         gridPane.add(new Text("# Set Time (sec)"), 0, 2);
@@ -655,7 +698,7 @@ public class App extends AppController {
 
         Button cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add("cancelbtn");
-        cancelBtn.setOnMouseClicked(this.onCancelBtnClicked());
+        cancelBtn.setOnMouseClicked(this.onCancelRandomTrfBtnClicked());
 
         HBox btnContainer = new HBox(cancelBtn, okBtn);
         btnContainer.setSpacing(10);

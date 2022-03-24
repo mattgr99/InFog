@@ -27,6 +27,8 @@ public class LeftSideBarController extends VBox {
     protected JFXButton trafficBtn = new JFXButton("", new ImageView("file:src/main/resources/image/email1.png"));
     protected JFXButton trafficRanBtn = new JFXButton("", new ImageView("file:src/main/resources/image/cartab.png"));
     protected JFXButton chartBarBtn = new JFXButton("", new ImageView("file:src/main/resources/image/bar-graph.png"));
+    protected JFXButton chartLineVmBtn = new JFXButton("", new ImageView("file:src/main/resources/image/line-graph.png"));
+    protected JFXButton chartLineTrBtn = new JFXButton("", new ImageView("file:src/main/resources/image/statistics.png"));
 
     public LeftSideBarController() {
         this.cloudServerBtn.setTooltip(new Tooltip("Cloud Server"));
@@ -35,7 +37,9 @@ public class LeftSideBarController extends VBox {
         this.actuatorBtn.setTooltip(new Tooltip("Actuator"));
         this.trafficBtn.setTooltip(new Tooltip("Traffic"));
         this.trafficRanBtn.setTooltip(new Tooltip("Traffic Random"));
-        this.chartBarBtn.setTooltip(new Tooltip("Bar Chart"));
+        this.chartBarBtn.setTooltip(new Tooltip("Energy Consumption Server"));
+        this.chartLineVmBtn.setTooltip(new Tooltip("VM - ON"));
+        this.chartLineTrBtn.setTooltip(new Tooltip("Arrival Per Slot"));
 
     }
 
@@ -65,5 +69,13 @@ public class LeftSideBarController extends VBox {
 
     public void setChartBarBtnEvent(EventHandler<MouseEvent> sensorActionEvent) {
         this.chartBarBtn.setOnMouseClicked(sensorActionEvent);
+    }
+
+    public void setChartLineVmBtnEvent(EventHandler<MouseEvent> chartActionEvent) {
+        this.chartLineVmBtn.setOnMouseClicked(chartActionEvent);
+    }
+
+    public void setChartLineTrBtnEvent(EventHandler<MouseEvent> chartActionEvent) {
+        this.chartLineTrBtn.setOnMouseClicked(chartActionEvent);
     }
 }

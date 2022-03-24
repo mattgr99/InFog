@@ -8,6 +8,9 @@ public class TrafficRandomHeuristc extends Thread{
     public static ArrayList<Integer> ramVM = new ArrayList<Integer>();
     public static ArrayList<Integer> copyRam = new ArrayList<Integer>();
     public static ArrayList<Integer> resetRam = new ArrayList<Integer>();
+    public static ArrayList<Double> energyServer = new ArrayList<Double>();
+    public static ArrayList<Integer> slots = new ArrayList<Integer>();
+    public static ArrayList<Integer> vms_on = new ArrayList<Integer>();
     public static Hashtable<Integer, ArrayList> trfList = new Hashtable<Integer, ArrayList>();
     public static Hashtable<Integer, ArrayList> trfListReset = new Hashtable<Integer, ArrayList>();
     public static int alt11;  //test
@@ -116,7 +119,7 @@ public class TrafficRandomHeuristc extends Thread{
 
     }
 
-    public static void resetServer(ArrayList<Integer> ramVM1, Hashtable<Integer, ArrayList> trf){
+    public static void resetServer(ArrayList<Integer> ramVM1){
         vmTurnOn = trfList;
         energyServer();
         //clstrfList = trfListReset;
@@ -389,6 +392,8 @@ public class TrafficRandomHeuristc extends Thread{
 
             }
         }
+        vms_on.add(m);
+        slots.add(workload);
         //System.out.println(m);
        // System.out.println(workload);
         f_zero = workload/(m * (Delta - T_on_server - T_on_vm));
@@ -402,6 +407,7 @@ public class TrafficRandomHeuristc extends Thread{
         System.out.println(outputEnergy_server+ "                                      |");
         System.out.println("--------------------------------------------------------");
         m = 0;
+        energyServer.add(outputEnergy_server);
         outputEnergy_server = 0.0;
 
 

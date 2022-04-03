@@ -5,6 +5,9 @@
  */
 package com.perdiz.neblina.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author alexander
@@ -13,11 +16,18 @@ public class ActuatorModel extends DeviceModel {
 
     private String type;
 
+
+    //public static List<CableModel> cables = new ArrayList<>();
+
     public ActuatorModel() {
     }
 
+
+
     public ActuatorModel(String id, String name) {
+
         super(id, name);
+
     }
 
     public ActuatorModel(String id, String type, String name) {

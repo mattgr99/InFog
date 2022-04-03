@@ -19,6 +19,7 @@ public class WorkStationController extends AnchorPane {
     protected byte numberOfFogServers = 0;
     protected byte numberOfSensors = 0;
     protected byte numberOfActuators = 0;
+    protected byte numberOfConnections = 0;
 
     public WorkStationController() {
     }
@@ -39,6 +40,8 @@ public class WorkStationController extends AnchorPane {
         return ++numberOfActuators;
     }
 
+    public byte getNumberOfConnections() { return ++numberOfConnections; }
+
     public void restartInitialsValues() {
         getChildren().clear();
         selectedFile = null;
@@ -46,6 +49,7 @@ public class WorkStationController extends AnchorPane {
         numberOfFogServers = 0;
         numberOfSensors = 0;
         numberOfActuators = 0;
+        numberOfConnections = 0;
     }
 
 }

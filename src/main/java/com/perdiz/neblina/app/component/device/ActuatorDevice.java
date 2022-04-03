@@ -25,6 +25,7 @@ public class ActuatorDevice extends ActuatorDeviceController {
         this.init();
     }
 
+
     private void init() {
 
         GridPane gridPane = new GridPane();

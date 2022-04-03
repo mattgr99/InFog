@@ -9,6 +9,7 @@ import com.perdiz.neblina.app.controller.AppController;
 import com.perdiz.neblina.app.controller.device.CableDeviceController;
 import com.perdiz.neblina.app.iu.Device;
 import com.perdiz.neblina.model.CableModel;
+import com.perdiz.neblina.model.DeviceModel;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -25,76 +26,59 @@ import javafx.stage.Stage;
  *
  * @author alexander
  */
-public class CableDevice  /*extends CableDeviceController*/ {
+public class CableDevice  extends Line/*extends CableDeviceController*/ {
 
 
-    protected CableModel device;
-    private Device device1;
+    //protected CableModel device;
+    /*private Device device1;
     private Device device2;
     private Line line;
     private String dev1Name;
     private String dev2Name;
-    private String latency;
+    private String latency;*/
+    private CableModel model;
 
 
 
-    public CableDevice(Device device, Device deviceEnd, Line connection, String dev1, String dev2, String latency) {
+    /*public CableDevice(Device device, Device deviceEnd, String dev1, String dev2, String latency) {
 
         this.device1=device;
         this.device2=deviceEnd;
-        this.line=connection;
         this.dev1Name = dev1;
         this.dev2Name = dev2;
         this.latency = latency;
         init();
 
-    }
+    }*/
 
     public CableDevice() {
 
     }
 
-    public Device getDevice1() {
-        return device1;
+    public CableDevice(CableModel cableModel) {
+        this.model = cableModel;
+        init();
+
     }
 
-    public void setDevice1(Device device1) {
-        this.device1 = device1;
-    }
 
-    public Device getDevice2() {
-        return device2;
-    }
-
-    public void setDevice2(Device device2) {
-        this.device2 = device2;
-    }
-
-    public Line getLine() {
-        return line;
-    }
-
-    public void setLine(Line line) {
-        this.line = line;
-    }
-
-    public String getDev1Name() {
-        return dev1Name;
-    }
-
-    public void setDev1Name(String dev1Name) {
-        this.dev1Name = dev1Name;
-    }
-
-    public String getDev2Name() {
-        return dev2Name;
-    }
-
-    public void setDev2Name(String dev2Name) {
-        this.dev2Name = dev2Name;
-    }
 
     private void init() {
+
+        setStroke(Color.BLACK);
+        setStrokeWidth(3);
+        setSmooth(false);
+        //line.getStrokeDashArray().addAll(25.0,10.0);
+
+// SVG dentro de javafx
+        //Bind the starting point coordinate of the line with the center coordinate of node device
+        startXProperty().bind(this.model.getDevice1().layoutXProperty().add(this.model.getDevice1().widthProperty().divide(2)));
+        startYProperty().bind(this.model.getDevice1().layoutYProperty().add(this.model.getDevice1().heightProperty().divide(2)));
+
+        //Bind the end coordinates of the line with the center coordinates of node deviceEnd
+        endXProperty().bind(this.model.getDevice2().layoutXProperty().add(this.model.getDevice2().widthProperty().divide(2)));
+        endYProperty().bind(this.model.getDevice2().layoutYProperty().add(this.model.getDevice2().heightProperty().divide(2)));
+        this.model.setLine(this);
 
         /*setStartX(cable.getSourceX());
         setStartY(cable.getSourceY());
@@ -105,4 +89,11 @@ public class CableDevice  /*extends CableDeviceController*/ {
 
     }
 
+    public CableModel getModel() {
+        return model;
+    }
+
+    public void setModel(CableModel model) {
+        this.model = model;
+    }
 }

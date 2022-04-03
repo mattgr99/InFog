@@ -5,6 +5,8 @@
  */
 package com.perdiz.neblina.model;
 
+import javafx.scene.shape.Line;
+
 /**
  *
  * @author alexander

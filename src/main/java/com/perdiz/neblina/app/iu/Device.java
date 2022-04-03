@@ -6,6 +6,7 @@
 package com.perdiz.neblina.app.iu;
 
 import com.jfoenix.controls.JFXButton;
+import com.perdiz.neblina.app.controller.device.CableDeviceController;
 import com.perdiz.neblina.model.DeviceModel;
 
 import java.awt.MouseInfo;
@@ -52,6 +53,7 @@ public abstract class Device extends VBox {
 
 
 
+
     public Device(DeviceModel device, ImageView icon) {
 
         this.device = device;
@@ -69,6 +71,13 @@ public abstract class Device extends VBox {
 
     }
 
+    public Device(){
+
+
+    }
+
+
+
     private void init() {
         nameLbl = new Label(device.getName());
         popup = new Popup();
@@ -80,6 +89,8 @@ public abstract class Device extends VBox {
         this.getChildren().addAll(icon, nameLbl);
 
         //when mouse button is pressed, save the initial position of screen or launch form stage
+        //setOnMouseEntered();
+
         setOnMousePressed((MouseEvent event) -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 if (event.getClickCount() == 1) {
@@ -117,6 +128,8 @@ public abstract class Device extends VBox {
         });
     }
 
+
+
     private VBox popupContent() {
 
 
@@ -126,7 +139,7 @@ public abstract class Device extends VBox {
         connectMenuItem.setMinWidth(150);
         connectMenuItem.setAlignment(Pos.CENTER_LEFT);
         connectMenuItem.getStyleClass().add("MenuItem");
-        //connectMenuItem.setOnMouseClicked(event -> this.launchFormStage());
+        connectMenuItem.setOnMouseClicked(event -> this.launchFormStage1());
 
         final FontIcon editIcon = new FontIcon(MaterialDesign.MDI_PENCIL);
         editIcon.setIconSize(20);
@@ -142,6 +155,7 @@ public abstract class Device extends VBox {
         deleteMenuItem.setMinWidth(150);
         deleteMenuItem.setAlignment(Pos.CENTER_LEFT);
         deleteMenuItem.getStyleClass().add("MenuItem");
+        deleteMenuItem.setOnMouseClicked(event -> this.deleteDeviceAction());
 
         final VBox content = new VBox(
                 connectMenuItem,
@@ -198,7 +212,21 @@ public abstract class Device extends VBox {
 
     }
 
+    protected void launchFormStage1() {
 
+        CableDeviceController cdc= new CableDeviceController(device);
+        cdc.activityFormCable();
+
+    }
+
+    protected void deleteDeviceAction() {
+
+        CableDeviceController deleteDev= new CableDeviceController(device, false);
+        deleteDev.deleteDevice();
+
+    }
+
+    public ImageView getIcon() { return icon; }
 
     public void setDevice(DeviceModel device) {
         this.device = device;

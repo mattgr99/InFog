@@ -42,7 +42,6 @@ import javafx.stage.Stage;
  * @author alexander
  */
 public class WorkStation extends WorkStationController {
-    private DeviceModel model1;
     private DeviceModel model2;
     private DeviceModel modelS;
     private DeviceModel modelS1;
@@ -110,10 +109,10 @@ public class WorkStation extends WorkStationController {
     private void addDeviceModel(CableModel model, List<CableSave> cables) {
         //AtomicReference<DeviceModel> dev1 = null;
         //AtomicReference<DeviceModel> dev2 = null;
-
+        AtomicReference<String> idD1 = new AtomicReference<>("");
+        AtomicReference<String> idD2 = new AtomicReference<>("");
 
         getChildren().forEach((node) -> {
-
             if (node instanceof ServerDevice) {
 
                 //System.out.println("Node: "+node);
@@ -121,9 +120,11 @@ public class WorkStation extends WorkStationController {
                 if ((model.getDevice1().toString()).equals(node.toString())){
 
                     this.modelS = (ServerModel) ((ServerDevice) node).getModel();
+                    idD1.set(this.modelS.getId());
 
                 }else if ((model.getDevice2().toString()).equals(node.toString())){
                     this.model2 = (ServerModel) ((ServerDevice) node).getModel();
+                    idD2.set(this.model2.getId());
                     // dev2.set((ServerModel) ((ServerDevice) node).getModel());
                 }
 
@@ -132,9 +133,12 @@ public class WorkStation extends WorkStationController {
                 if ((model.getDevice1().toString()).equals(node.toString())){
 
                     this.modelS = (SensorModel) ((SensorDevice) node).getModel();
+                    idD1.set(this.modelS.getId());
+
                 }else if ((model.getDevice2().toString()).equals(node.toString())){
 
                     this.model2 = (SensorModel) ((SensorDevice) node).getModel();
+                    idD2.set(this.model2.getId());
                 }
 
 
@@ -142,19 +146,22 @@ public class WorkStation extends WorkStationController {
                 if ((model.getDevice1().toString()).equals(node.toString())){
 
                     this.modelS = (ActuatorModel) ((ActuatorDevice) node).getModel();
+                    idD1.set(this.modelS.getId());
+
                 }else if ((model.getDevice2().toString()).equals(node.toString())){
 
                     this.model2 = (ActuatorModel) ((ActuatorDevice) node).getModel();
+                    idD2.set(this.model2.getId());
                 }
 
             }
 
         });
 
-        //System.out.println(this.modelS);
-        //System.out.println(this.model2);
+        /*System.out.println(idD1.get());
+        System.out.println(idD2.get());*/
 
-        CableSave cableSave = new CableSave(this.modelS.toString(), this.model2.toString(), model.getDev1Name(), model.getDev2Name(), model.getLatency());
+        CableSave cableSave = new CableSave(idD1.get(), idD2.get(), model.getDev1Name(), model.getDev2Name(), model.getLatency());
         cables.add(cableSave);
     }
 
@@ -406,12 +413,12 @@ public class WorkStation extends WorkStationController {
             if (node instanceof ServerDevice) {
 
                 this.modelS1 = (ServerModel) ((ServerDevice) node).getModel();
-                //System.out.println("Node: "+modelS1.getName());
-                if ((cableSave.getDev1Name()).equals(this.modelS1.getName())){
+                //System.out.println("Node: "+modelS1.getId());
+                if ((cableSave.getDevice1()).equals(this.modelS1.getId())){
                         this.deviceE = (ServerDevice) node;
 
 
-                }else if ((cableSave.getDev2Name()).equals(this.modelS1.getName())){
+                }else if ((cableSave.getDevice2()).equals(this.modelS1.getId())){
                     this.deviceE1 = (ServerDevice) node;
                     // dev2.set((ServerModel) ((ServerDevice) node).getModel());
                 }
@@ -419,11 +426,12 @@ public class WorkStation extends WorkStationController {
 
             } else if (node instanceof SensorDevice) {
                 this.modelS1 = (SensorModel) ((SensorDevice) node).getModel();
-                if ((cableSave.getDev1Name()).equals(this.modelS1.getName())){
+               // System.out.println("Node: "+modelS1.getId());
+                if ((cableSave.getDevice1()).equals(this.modelS1.getId())){
                     this.deviceE = (SensorDevice) node;
 
 
-                }else if ((cableSave.getDev2Name()).equals(this.modelS1.getName())){
+                }else if ((cableSave.getDevice2()).equals(this.modelS1.getId())){
                     this.deviceE1 = (SensorDevice) node;
                     // dev2.set((ServerModel) ((ServerDevice) node).getModel());
                 }
@@ -432,12 +440,13 @@ public class WorkStation extends WorkStationController {
             } else if (node instanceof ActuatorDevice) {
 
                 this.modelS1 = (ActuatorModel) ((ActuatorDevice) node).getModel();
-                //System.out.println("Node: "+modelS1.getName());
-                if ((cableSave.getDev1Name()).equals(this.modelS1.getName())){
+                //System.out.println("Node: "+modelS1.getId());
+
+                if ((cableSave.getDevice1()).equals(this.modelS1.getId())){
                     this.deviceE = (ActuatorDevice) node;
 
 
-                }else if ((cableSave.getDev2Name()).equals(this.modelS1.getName())){
+                }else if ((cableSave.getDevice2()).equals(this.modelS1.getId())){
                     this.deviceE1 = (ActuatorDevice) node;
                     // dev2.set((ServerModel) ((ServerDevice) node).getModel());
                 }
@@ -447,10 +456,10 @@ public class WorkStation extends WorkStationController {
 
         });
 
-        //System.out.println("Device 1 : " + cableSave.getDev1Name());
-        //System.out.println("Device 2 : " + cableSave.getDev2Name());
-        //System.out.println(this.deviceE);
-        //System.out.println(this.deviceE1);
+        /*System.out.println("Device 1 : " + cableSave.getDevice1());
+        System.out.println("Device 2 : " + cableSave.getDevice2());*/
+        /*System.out.println(this.deviceE);
+        System.out.println(this.deviceE1);*/
         byte number = App.workStation.getNumberOfConnections();
         CableModel cableModel = new CableModel("CC" + number,"Cable" + number ,this.deviceE,this.deviceE1, cableSave.getDev1Name(), cableSave.getDev2Name(), cableSave.getLatency());
         CableDevice cableDevice = new CableDevice(cableModel);

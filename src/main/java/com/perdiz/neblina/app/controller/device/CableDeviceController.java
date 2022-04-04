@@ -63,6 +63,7 @@ public class CableDeviceController extends Device {
 
     public CableDeviceController(DeviceModel device1) {
         this.latencyField = new TextField("");
+        this.nameField = new TextField("");
         this.device = device1;
     }
 
@@ -95,7 +96,7 @@ public class CableDeviceController extends Device {
 
         Button cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add("cancelbtn");
-        //cancelBtn.setOnMouseClicked(this.onCancelBtnClicked());
+        cancelBtn.setOnMouseClicked(this.onCancelBtnClicked());
 
         HBox btnContainer = new HBox(cancelBtn, okBtn);
         btnContainer.setSpacing(10);
@@ -111,7 +112,7 @@ public class CableDeviceController extends Device {
         formStage.initModality(Modality.WINDOW_MODAL);
         //formStage.initOwner(primaryStage);
         formStage.setResizable(false);
-        formStage.setTitle("Connect " + device.getClass().getSimpleName());
+        formStage.setTitle("Connect Devices" /*+ device.getClass().getSimpleName()*/);
         formStage.showAndWait();
         formStage.close();
         items.clear();
@@ -122,12 +123,26 @@ public class CableDeviceController extends Device {
         App.connects.forEach((item)->{
            // System.out.println(item.getDevice1());
             //System.out.println(item.getDevice2());
+            if ((item.getDevice1()==deviceStart)){
+                App.slotsTrf.remove(item.getDev1Name());
+                App.trfDevice.remove(item.getDev1Name());
+
+            }
+
+            if ((item.getDevice2()==deviceStart)){
+                App.slotsTrf.remove(item.getDev2Name());
+                App.trfDevice.remove(item.getDev2Name());
+
+            }
+
             if ((item.getDevice1()==deviceStart) || (item.getDevice2()==deviceStart)){
                 App.workStation.getChildren().remove(item.getLine());
                 //this.cb = item;
                 connectsRep.add(item);
 
             }
+
+
 
         });
         App.workStation.getChildren().remove(deviceStart);
@@ -260,6 +275,7 @@ public class CableDeviceController extends Device {
                 nameDev2= selectNameDevice(deviceEnd);
                 byte number = App.workStation.getNumberOfConnections();
                 CableModel cableModel = new CableModel("CC" + number,"Cable" + number ,deviceStart,deviceEnd, nameDev1, nameDev2, this.latencyField.getText());
+                this.cable = cableModel;
                 CableDevice cableDevice = new CableDevice(cableModel);
                 App.connects.add(cableModel);
                 App.workStation.getChildren().add(cableDevice);
@@ -283,7 +299,7 @@ public class CableDeviceController extends Device {
     // Reset form values if canceled
     protected EventHandler<MouseEvent> onCancelBtnClicked() {
         return event -> {
-            this.nameField.setText(this.cable.getName());
+            this.nameField.setText("");
 
             this.formStage.close();
         };

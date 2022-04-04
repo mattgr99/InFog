@@ -18,11 +18,15 @@ import com.perdiz.neblina.app.resource.Resource;
 import com.perdiz.neblina.charts.BarChartTraffic;
 import com.perdiz.neblina.charts.LineChartTraffic;
 import com.perdiz.neblina.heuristics.DeviceTraffic;
+import com.perdiz.neblina.heuristics.DeviceTrafficRandom;
 import com.perdiz.neblina.heuristics.TrafficHeuristc;
 import com.perdiz.neblina.heuristics.TrafficRandomHeuristc;
 import com.perdiz.neblina.model.*;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -30,27 +34,17 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 //import javafx.animation.transition.*;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -71,17 +65,15 @@ public class App extends AppController {
     protected TextField timeExeField;
     protected TextField timeDeviceField;
     protected CableModel cable;
-    protected Device deviceEnd;
+
     public static ArrayList<CableModel> connects = new ArrayList<CableModel>();
-    ArrayList<CableModel> connectsRep = new ArrayList<CableModel>();
     ArrayList<Integer> slots = new ArrayList<Integer>();
-    Hashtable<String, DeviceTraffic> trfDevice = new Hashtable<String, DeviceTraffic>();
+    public static Hashtable<String, DeviceTraffic> slotsTrf = new Hashtable<String, DeviceTraffic>();
+    public static Hashtable<String, DeviceTrafficRandom> trfDevice = new Hashtable<String, DeviceTrafficRandom>();
 
     CableDevice cb = new CableDevice();
     ImageView trimg = new ImageView("file:src/main/resources/image/email1.png");
     ArrayList<ImageView> imgTraffics = new ArrayList<ImageView>();
-    String nameDev1;
-    String nameDev2;
     String traffic;
     int timeTraffic;
     Boolean isSetTime = false;
@@ -166,6 +158,23 @@ public class App extends AppController {
 
         this.toolBar.setOnPlayActionEvent((t) -> {
             //Work time server
+            ArrayList<Integer> listr = new ArrayList<>();
+            for (Map.Entry<String, DeviceTraffic> von : slotsTrf.entrySet()){
+
+                DeviceTraffic trafficDev = von.getValue();
+
+                listr.add(Integer.parseInt(trafficDev.getValTraffic()));
+                //pos = von.getKey();
+
+            }
+
+            int sizelist = listr.size() - 1;
+
+            for (int i = 0; i < listr.size(); i++) {
+                slots.add(listr.get(sizelist));
+                sizelist--;
+            }
+
             ArrayList<Integer> rmvms = new ArrayList<Integer>();
             ServerModel model = trafficServer();
             TrafficHeuristc tf = new TrafficHeuristc((int)model.getVmachines(),slots.size());
@@ -214,21 +223,20 @@ public class App extends AppController {
                 }
 
 
-
                 for(int exe=0; exe<nsen; exe++){
                     if(this.trfDevice.get(nameSensors.get(exe)) == null){
                         continue;
                     }
-                    DeviceTraffic dvt = this.trfDevice.get(nameSensors.get(exe));
+                    DeviceTrafficRandom dvt = this.trfDevice.get(nameSensors.get(exe));
                     TrafficRandomHeuristc ner1 = new TrafficRandomHeuristc((int)model.getVmachines(), rmvms, dvt.getTime(), nameSensors.get(exe),finalDisTrf, dvt.getFirstInterval(), dvt.getSecondInterval());
                     trsend.add(ner1);
                 }
 
-                Enumeration<String> ekey = this.trfDevice.keys();
+                /*Enumeration<String> ekey = this.trfDevice.keys();
                 ekey = this.trfDevice.keys();
                 while(ekey.hasMoreElements()){
                     this.trfDevice.remove(ekey.nextElement());
-                }
+                }*/
 
                 ArrayList<String> finalNameSensors = nameSensors;
 
@@ -286,7 +294,6 @@ public class App extends AppController {
 
                         }
                         count++;
-
 
                     }
                 };
@@ -392,7 +399,6 @@ public class App extends AppController {
 
 
 
-
     /*-----------------------------------------------------------------------
      -                                  Events                              -
      ----------------------------------------------------------------------*/
@@ -441,15 +447,16 @@ public class App extends AppController {
     protected EventHandler<MouseEvent> onCancelBtnClicked() {
         return event -> {
             //this.cbx.setValue(this.cable.getDestinyId());
-            this.latencyField.setText(this.cable.getLatency());
+            this.trafficField.setText("");
             this.formStage.close();
         };
     }
 
     protected EventHandler<MouseEvent> onCancelRandomTrfBtnClicked() {
         return event -> {
-            //this.cbx.setValue(this.cable.getDestinyId());
-            //this.latencyField.setText(this.cable.getLatency());
+            trafficRField1.setText("");
+            trafficRField2.setText("");
+            timeDeviceField.setText("");
             this.formStage.close();
         };
     }
@@ -462,7 +469,6 @@ public class App extends AppController {
     }
 
     protected void launchFormTraffic(){
-
 
         ObservableList<String> items = FXCollections.observableArrayList();
         addDestiny(items);
@@ -488,6 +494,7 @@ public class App extends AppController {
         Button cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add("cancelbtn");
         cancelBtn.setOnMouseClicked(this.onCancelBtnClicked());
+        cbx.valueProperty().addListener(onChangeTrafficField());
 
         HBox btnContainer = new HBox(cancelBtn, okBtn);
         btnContainer.setSpacing(10);
@@ -507,13 +514,27 @@ public class App extends AppController {
         formStage.showAndWait();
         formStage.close();
         items.clear();
-       //
 
 
     }
 
-    protected void launchFormRandomTraffic(){
+    protected ChangeListener<String> onChangeTrafficField() {
+        return (ChangeListener<String>)(ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            if(newValue != null ) {
 
+                if (slotsTrf.get(newValue)!= null){
+                    DeviceTraffic dt = slotsTrf.get(newValue);
+                    trafficField.setText(dt.getValTraffic());
+                }else {
+                    trafficField.setText("");
+                }
+
+            }
+            //System.out.println("Cambio contenido");
+        };
+    }
+
+    protected void launchFormRandomTraffic(){
 
         ObservableList<String> items = FXCollections.observableArrayList();
         addDestiny(items);
@@ -549,6 +570,7 @@ public class App extends AppController {
         Button cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add("cancelbtn");
         cancelBtn.setOnMouseClicked(this.onCancelRandomTrfBtnClicked());
+        cbx.valueProperty().addListener(onChangeTrafficRandomField());
 
         HBox btnContainer = new HBox(cancelBtn, okBtn);
         btnContainer.setSpacing(10);
@@ -568,9 +590,28 @@ public class App extends AppController {
         formStage.showAndWait();
         formStage.close();
         items.clear();
-        //
 
 
+    }
+
+    protected ChangeListener<String> onChangeTrafficRandomField() {
+        return (ChangeListener<String>)(ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            if(newValue != null ) {
+
+                if (trfDevice.get(newValue)!= null){
+                    DeviceTrafficRandom dtr = trfDevice.get(newValue);
+                    trafficRField1.setText("" + dtr.getFirstInterval());
+                    trafficRField2.setText("" + dtr.getSecondInterval());
+                    timeDeviceField.setText("" + dtr.getTime());
+                }else {
+                    trafficRField1.setText("");
+                    trafficRField2.setText("");
+                    timeDeviceField.setText("");
+                }
+
+            }
+            //System.out.println("Cambio contenido");
+        };
     }
 
     protected void launchFormRandomPlay(){
@@ -664,7 +705,9 @@ public class App extends AppController {
             Device deviceTraf = devInstance(valDevice);
             int countA=Collections.frequency(mList, deviceTraf);
             if (countA!=0){
-                slots.add(Integer.parseInt(trafficField.getText()));
+                DeviceTraffic trfInstance = new DeviceTraffic(trafficField.getText());
+                slotsTrf.put(cbx.getValue(),trfInstance);
+
                 connects.forEach((itDev)->{
                     if (itDev.getDevice1()==deviceTraf){
 
@@ -716,7 +759,7 @@ public class App extends AppController {
         //System.out.println("Node" + i[0]);
         return event -> {
             //slots.add(Integer.parseInt(trafficField.getText()));
-            DeviceTraffic dvt = new DeviceTraffic(Integer.parseInt(this.trafficRField1.getText()),Integer.parseInt(this.trafficRField2.getText()), Integer.parseInt(this.timeDeviceField.getText()));
+            DeviceTrafficRandom dvt = new DeviceTrafficRandom(Integer.parseInt(this.trafficRField1.getText()),Integer.parseInt(this.trafficRField2.getText()), Integer.parseInt(this.timeDeviceField.getText()));
             String valDevice;
             valDevice = cbx.getValue();
             this.trfDevice.put(valDevice,dvt);
@@ -841,7 +884,6 @@ public class App extends AppController {
         btnLightSensor.setTooltip(new Tooltip("Light Sensor"));
 
 
-
         gridPane.add(new Text("City        "), 0, 2);
         gridPane.add(btnFingerPrint, 0, 3);
         btnFingerPrint.setTooltip(new Tooltip("Finger Print Scan"));
@@ -913,8 +955,6 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,1 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/cctv.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -925,8 +965,6 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,2 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/air-purifier.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -937,8 +975,6 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,3 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/motion-sensor.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -950,8 +986,6 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,4 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/light-sensor.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -963,8 +997,6 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,5 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/fingerprint.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -975,8 +1007,6 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,6 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageResource(Resource.CARDIOGRAM));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -987,8 +1017,6 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,7 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/pulse-oximeter.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -1000,8 +1028,6 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,8 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/glucometer.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -1012,8 +1038,6 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,9 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/smart-temperature.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -1024,8 +1048,7 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,10 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/smartwatch.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
+
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -1036,8 +1059,6 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,11 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/light-meter.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -1048,8 +1069,6 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,12 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/driverless-car.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -1060,11 +1079,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,13 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
             Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/charging-station.png"));
-            //device.setOnConnectEvent(onConnectEvent(device));
-            //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
     }
-
 }

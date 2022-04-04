@@ -50,4 +50,7 @@ public class DeviceModel {
         this.name = name;
     }
 
+    public String getId() {
+        return id;
+    }
 }

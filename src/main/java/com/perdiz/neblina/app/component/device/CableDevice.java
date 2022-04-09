@@ -37,6 +37,7 @@ public class CableDevice  extends Line/*extends CableDeviceController*/ {
     private String dev2Name;
     private String latency;*/
     private CableModel model;
+    private  Color colorConnection;
 
 
 
@@ -61,11 +62,19 @@ public class CableDevice  extends Line/*extends CableDeviceController*/ {
 
     }
 
+    public CableDevice(CableModel cableModel, Color color) {
+        this.model = cableModel;
+        this.colorConnection = color;
+        init();
+
+    }
+
 
 
     private void init() {
 
-        setStroke(Color.BLACK);
+
+        setStroke(this.colorConnection);
         setStrokeWidth(3);
         setSmooth(false);
         //line.getStrokeDashArray().addAll(25.0,10.0);

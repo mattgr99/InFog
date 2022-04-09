@@ -20,8 +20,9 @@ import javafx.scene.layout.VBox;
  */
 public class LeftSideBarController extends VBox {
 
-    protected JFXButton cloudServerBtn = new JFXButton("", new ImageResource(Resource.CLOUDSERVERLIGHT));
-    protected JFXButton fogServerBtn = new JFXButton("", new ImageResource(Resource.FOGSERVERLIGHT));
+    protected JFXButton cloudServerBtn = new JFXButton("", new ImageView("file:src/main/resources/image/cloud1Server.png"));
+    protected JFXButton proxyServerBtn = new JFXButton("", new ImageView("file:src/main/resources/image/proxyserver.png"));
+    protected JFXButton fogServerBtn = new JFXButton("", new ImageResource(Resource.CLOUDSERVERLIGHT));
     protected JFXButton actuatorBtn = new JFXButton("", new ImageResource(Resource.ACTUATORLIGHT));
     protected JFXButton sensorBtn = new JFXButton("", new ImageResource(Resource.SENSORLIGHT));
     protected JFXButton trafficBtn = new JFXButton("", new ImageView("file:src/main/resources/image/email1.png"));
@@ -33,6 +34,7 @@ public class LeftSideBarController extends VBox {
     public LeftSideBarController() {
         this.cloudServerBtn.setTooltip(new Tooltip("Cloud Server"));
         this.fogServerBtn.setTooltip(new Tooltip("Fog Server"));
+        this.proxyServerBtn.setTooltip(new Tooltip("Proxy Server"));
         this.sensorBtn.setTooltip(new Tooltip("Sensor"));
         this.actuatorBtn.setTooltip(new Tooltip("Actuator"));
         this.trafficBtn.setTooltip(new Tooltip("Traffic"));
@@ -49,6 +51,10 @@ public class LeftSideBarController extends VBox {
 
     public void setFogServerActionEvent(EventHandler<MouseEvent> fogServerActionEvent) {
         this.fogServerBtn.setOnMouseClicked(fogServerActionEvent);
+    }
+
+    public void setProxyServerActionEvent(EventHandler<MouseEvent> proxyServerActionEvent) {
+        this.proxyServerBtn.setOnMouseClicked(proxyServerActionEvent);
     }
 
     public void setActuatorActionEvent(EventHandler<MouseEvent> macbookActionEvent) {

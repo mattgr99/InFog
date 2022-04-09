@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -169,6 +170,7 @@ public class WorkStation extends WorkStationController {
         Map<String, Object> map = new HashMap<>();
         map.put("cloudServers", numberOfCloudServers);
         map.put("fogServers", numberOfFogServers);
+        map.put("proxyServers", numberOfProxyServers);
         map.put("sensors", numberOfSensors);
         map.put("actuators", numberOfActuators);
        // map.put("cables", numberOfConnections);
@@ -271,6 +273,9 @@ public class WorkStation extends WorkStationController {
                                 case "fogServers":
                                     numberOfFogServers = (byte) (int) Double.parseDouble(value.getValue().toString());
                                     break;
+                                case "proxyServers":
+                                    numberOfProxyServers = (byte) (int) Double.parseDouble(value.getValue().toString());
+                                    break;
                             }
                         }
                         break;
@@ -284,7 +289,7 @@ public class WorkStation extends WorkStationController {
                                     }.getType();
                                     List<ServerModel> servers = new Gson().fromJson(device.getValue().toString(), serverType);
                                     servers.forEach((server) -> {
-                                        getChildren().add(new ServerDevice(server));
+                                        getChildren().add(new ServerDevice(server, true));
                                         CableDeviceController.workStation = this;
                                     });
                                     break;
@@ -462,10 +467,42 @@ public class WorkStation extends WorkStationController {
         System.out.println(this.deviceE1);*/
         byte number = App.workStation.getNumberOfConnections();
         CableModel cableModel = new CableModel("CC" + number,"Cable" + number ,this.deviceE,this.deviceE1, cableSave.getDev1Name(), cableSave.getDev2Name(), cableSave.getLatency());
-        CableDevice cableDevice = new CableDevice(cableModel);
+        CableDevice cableDevice = new CableDevice(cableModel, setColorConnection(this.deviceE, this.deviceE1));
         App.connects.add(cableModel);
         getChildren().add(cableDevice);
 
+
+    }
+
+    private Color setColorConnection(Device deviceN, Device deviceE){
+        Color colorC= Color.CORAL;
+        int sConnect =-1;
+        int eConnect = -1;
+
+
+        if ((deviceN instanceof ServerDevice)) {
+
+            ServerModel model = (ServerModel) ((ServerDevice) deviceN).getModel();
+            sConnect = model.getLevel();
+        }
+        if ((deviceE instanceof ServerDevice)) {
+            ServerModel model = (ServerModel) ((ServerDevice) deviceE).getModel();
+            eConnect = model.getLevel();
+        }
+
+        if (((sConnect==1)&&(eConnect==2)) || ((eConnect==1)&&(sConnect==2))) {
+            colorC= Color.GREEN;
+        }else if (((sConnect==0)&&(eConnect==2)) || ((eConnect==0)&&(sConnect==2))) {
+            colorC= Color.RED;
+        }
+
+
+        if ((deviceN instanceof SensorDevice || deviceE instanceof SensorDevice) ||
+                (deviceN instanceof ActuatorDevice || deviceE instanceof ActuatorDevice)) {
+            colorC= Color.BLACK;
+        }
+
+        return colorC;
 
     }
 

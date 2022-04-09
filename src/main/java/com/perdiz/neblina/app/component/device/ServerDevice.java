@@ -34,6 +34,12 @@ public class ServerDevice extends ServerDeviceController {
         init();
     }
 
+    public ServerDevice(ServerModel server, boolean inicial) {
+        super(server, inicial);
+        ramVMText.setVisible(false);
+        init();
+    }
+
     private void init() {
 
         GridPane gridPane = new GridPane();

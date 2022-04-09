@@ -13,7 +13,10 @@ import com.perdiz.neblina.app.component.device.CableDevice;
 import com.perdiz.neblina.app.component.device.SensorDevice;
 import com.perdiz.neblina.app.component.device.ServerDevice;
 import com.perdiz.neblina.app.iu.Device;
+import com.perdiz.neblina.heuristics.DeviceTrafficRandom;
 import com.perdiz.neblina.model.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -51,6 +54,11 @@ public class CableDeviceController extends Device {
     private Device deviceStart;
     private Device deviceEnd;
     private Device deviceVal;
+    CableModel modelC;
+    boolean isFound = false;
+    boolean isSaved = false;
+    int sConnect = -1;
+    int eConnect = -1;
 
     String nameDev1;
     String nameDev2;
@@ -97,6 +105,7 @@ public class CableDeviceController extends Device {
         Button cancelBtn = new Button("Cancel");
         cancelBtn.getStyleClass().add("cancelbtn");
         cancelBtn.setOnMouseClicked(this.onCancelBtnClicked());
+        cbx.valueProperty().addListener(onChangeLatencyField());
 
         HBox btnContainer = new HBox(cancelBtn, okBtn);
         btnContainer.setSpacing(10);
@@ -116,6 +125,67 @@ public class CableDeviceController extends Device {
         formStage.showAndWait();
         formStage.close();
         items.clear();
+    }
+
+    private ChangeListener<? super String> onChangeLatencyField() {
+        return (ChangeListener<String>)(ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+
+            if(newValue != null ) {
+
+                for (Node node: App.workStation.getChildren()) {
+                    if (node instanceof CableDevice) {
+                        modelC = (CableModel) ((CableDevice) node).getModel();
+                        searchDeviceEnd(cbx.getValue());
+                        if(((deviceStart==modelC.getDevice1()) && (deviceVal==modelC.getDevice2())) ||
+                                ((deviceStart==modelC.getDevice2()) && (deviceVal==modelC.getDevice1()))){
+                            //isFound = true;
+                            isSaved = true;
+                            break;
+
+                        }
+                        //addDeviceModel(model, cables);
+                        //System.out.println(model.getDevice1().toString()+ ", " + model.getDevice1().toString());
+
+                    }
+                }
+
+
+                //System.out.println(isFound);
+                if (isSaved){
+                    int latency = (int) Double.parseDouble(modelC.getLatency());
+                    latencyField.setText(""+latency);
+                    isSaved = false;
+                    //isFound = false;
+                }else {
+                    latencyField.setText("");
+
+                }
+
+            }
+        };
+    }
+
+    public void searchDeviceEnd(String valor){
+
+        workStation.getChildren().forEach((node) -> {
+            if (node instanceof ServerDevice) {
+                ServerModel model = (ServerModel) ((ServerDevice) node).getModel();
+                if (model.getName().equals(valor)){
+                    deviceVal = (Device) node;
+                }
+
+            } else if (node instanceof SensorDevice) {
+                SensorModel model = (SensorModel) ((SensorDevice) node).getModel();
+                if (model.getName().equals(valor)){
+                    deviceVal = (Device) node;
+                }
+            } else if (node instanceof ActuatorDevice) {
+                ActuatorModel model = (ActuatorModel) ((ActuatorDevice) node).getModel();
+                if (model.getName().equals(valor)){
+                    deviceVal = (Device) node;
+                }
+            }
+        });
     }
 
     public void deleteDevice(){
@@ -215,6 +285,58 @@ public class CableDeviceController extends Device {
             items.remove(device.getName());
             //cable.setName(model.getName());
         }
+
+        if (deviceStart instanceof ServerDevice) {
+            ServerModel model = (ServerModel) ((ServerDevice) deviceStart).getModel();
+
+            workStation.getChildren().forEach((node) -> {
+                if (node instanceof SensorDevice) {
+                    SensorModel model1 = (SensorModel) ((SensorDevice) node).getModel();
+                    items.remove(model1.getName());
+                } else if (node instanceof ActuatorDevice) {
+                    ActuatorModel model1 = (ActuatorModel) ((ActuatorDevice) node).getModel();
+                    items.remove(model1.getName());
+                }
+            });
+        }else if (deviceStart instanceof ActuatorDevice) {
+            ActuatorModel model = (ActuatorModel) ((ActuatorDevice) deviceStart).getModel();
+            workStation.getChildren().forEach((node) -> {
+                if (node instanceof ServerDevice) {
+                    ServerModel model1 = (ServerModel) ((ServerDevice) node).getModel();
+                    if ((model1.getLevel()==0) || (model1.getLevel()==2)) {
+                        items.remove(model1.getName());
+                    }
+
+                }else if (node instanceof SensorDevice) {
+                    SensorModel model1 = (SensorModel) ((SensorDevice) node).getModel();
+//                    if (!(device instanceof SensorModel))
+                        items.remove(model1.getName());
+                } else if (node instanceof ActuatorDevice) {
+                    ActuatorModel model1 = (ActuatorModel) ((ActuatorDevice) node).getModel();
+//                    if (!(device instanceof ActuatorModel))
+                        items.remove(model1.getName());
+                }
+            });
+        }else if (deviceStart instanceof SensorDevice) {
+            SensorModel model = (SensorModel) ((SensorDevice) deviceStart).getModel();
+            workStation.getChildren().forEach((node) -> {
+                if (node instanceof ServerDevice) {
+                    ServerModel model1 = (ServerModel) ((ServerDevice) node).getModel();
+                    if ((model1.getLevel()==0) || (model1.getLevel()==2)) {
+                        items.remove(model1.getName());
+                    }
+
+                }else if (node instanceof SensorDevice) {
+                    SensorModel model1 = (SensorModel) ((SensorDevice) node).getModel();
+//                    if (!(device instanceof SensorModel))
+                        items.remove(model1.getName());
+                } else if (node instanceof ActuatorDevice) {
+                    ActuatorModel model1 = (ActuatorModel) ((ActuatorDevice) node).getModel();
+//                    if (!(device instanceof ActuatorModel))
+                        items.remove(model1.getName());
+                }
+            });
+        }
     }
 
     private String selectNameDevice(Device deviceN){
@@ -232,6 +354,36 @@ public class CableDeviceController extends Device {
         }
 
         return nameDev;
+
+    }
+
+    private Color setColorConnection(Device deviceN, Device deviceE){
+        Color colorC= Color.CORAL;
+
+
+        if ((deviceN instanceof ServerDevice)) {
+
+            ServerModel model = (ServerModel) ((ServerDevice) deviceN).getModel();
+            sConnect = model.getLevel();
+        }
+        if ((deviceE instanceof ServerDevice)) {
+            ServerModel model = (ServerModel) ((ServerDevice) deviceE).getModel();
+            eConnect = model.getLevel();
+        }
+
+        if (((sConnect==1)&&(eConnect==2)) || ((eConnect==1)&&(sConnect==2))) {
+            colorC= Color.GREEN;
+        }else if (((sConnect==0)&&(eConnect==2)) || ((eConnect==0)&&(sConnect==2))) {
+            colorC= Color.RED;
+        }
+
+
+        if ((deviceN instanceof SensorDevice || deviceE instanceof SensorDevice) ||
+                (deviceN instanceof ActuatorDevice || deviceE instanceof ActuatorDevice)) {
+            colorC= Color.BLACK;
+        }
+
+        return colorC;
 
     }
 
@@ -269,16 +421,47 @@ public class CableDeviceController extends Device {
                 });
 
 
-                //Create lin
+                for (Node node: App.workStation.getChildren()) {
+                    if (node instanceof CableDevice) {
+                        modelC = (CableModel) ((CableDevice) node).getModel();
+                        //searchDeviceEnd(cbx.getValue());
+                        if(((deviceStart==modelC.getDevice1()) && (deviceEnd==modelC.getDevice2())) ||
+                                ((deviceStart==modelC.getDevice2()) && (deviceEnd==modelC.getDevice1()))){
+                            isFound = true;
+                            //isSaved = true;
+                            //System.out.println("cew");
+                            break;
 
-                nameDev1= selectNameDevice(deviceStart);
-                nameDev2= selectNameDevice(deviceEnd);
-                byte number = App.workStation.getNumberOfConnections();
-                CableModel cableModel = new CableModel("CC" + number,"Cable" + number ,deviceStart,deviceEnd, nameDev1, nameDev2, this.latencyField.getText());
-                this.cable = cableModel;
-                CableDevice cableDevice = new CableDevice(cableModel);
-                App.connects.add(cableModel);
-                App.workStation.getChildren().add(cableDevice);
+                        }else{
+                            isFound = false;
+                        }
+                        //addDeviceModel(model, cables);
+                        //System.out.println(model.getDevice1().toString()+ ", " + model.getDevice1().toString());
+
+                    }
+                }
+
+
+                //Create line
+                if (isFound) {
+                    this.modelC.setLatency(this.latencyField.getText());
+                    //System.out.println("entra");
+                    //isFound = false;
+                }else{
+                    nameDev1= selectNameDevice(deviceStart);
+                    nameDev2= selectNameDevice(deviceEnd);
+                    byte number = App.workStation.getNumberOfConnections();
+                    CableModel cableModel = new CableModel("CC" + number,"Cable" + number ,deviceStart,deviceEnd, nameDev1, nameDev2, this.latencyField.getText());
+                    this.cable = cableModel;
+                    CableDevice cableDevice = new CableDevice(cableModel, setColorConnection(deviceStart, deviceEnd));
+                    sConnect = -1;
+                    eConnect =-1;
+                    App.connects.add(cableModel);
+                    App.workStation.getChildren().add(cableDevice);
+                }
+
+
+
 
 
                 this.latencyField.setText("");
@@ -300,7 +483,7 @@ public class CableDeviceController extends Device {
     protected EventHandler<MouseEvent> onCancelBtnClicked() {
         return event -> {
             this.nameField.setText("");
-
+            this.isFound = false;
             this.formStage.close();
         };
     }

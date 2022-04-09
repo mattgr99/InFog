@@ -7,6 +7,8 @@ package com.perdiz.neblina.app.iu;
 
 import com.jfoenix.controls.JFXButton;
 import com.perdiz.neblina.app.controller.device.CableDeviceController;
+import com.perdiz.neblina.app.resource.ImageResource;
+import com.perdiz.neblina.app.resource.Resource;
 import com.perdiz.neblina.model.DeviceModel;
 
 import java.awt.MouseInfo;
@@ -58,6 +60,25 @@ public abstract class Device extends VBox {
 
         this.device = device;
         this.icon = icon;
+        setLayoutX(device.getX());
+        setLayoutY(device.getY());
+        setAlignment(Pos.CENTER);
+        //provide a universally unique identifier for this object
+        //setId(UUID.randomUUID().toString());
+        init();
+    }
+
+    public Device(DeviceModel device, Byte level) {
+
+        this.device = device;
+        if (level == 0) {
+            this.icon = new ImageView("file:src/main/resources/image/cloud1Server.png");
+        }else if (level == 1){
+            this.icon = new ImageResource(Resource.CLOUDSERVER);
+        } else if (level== 2){
+            this.icon = new ImageView("file:src/main/resources/image/proxyserver.png");
+        }
+
         setLayoutX(device.getX());
         setLayoutY(device.getY());
         setAlignment(Pos.CENTER);

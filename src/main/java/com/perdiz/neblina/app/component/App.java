@@ -64,14 +64,14 @@ public class App extends AppController {
     protected TextField trafficRField2;
     protected TextField timeExeField;
     protected TextField timeDeviceField;
-    protected CableModel cable;
+    //protected CableModel cable;
 
     public static ArrayList<CableModel> connects = new ArrayList<CableModel>();
     ArrayList<Integer> slots = new ArrayList<Integer>();
     public static Hashtable<String, DeviceTraffic> slotsTrf = new Hashtable<String, DeviceTraffic>();
     public static Hashtable<String, DeviceTrafficRandom> trfDevice = new Hashtable<String, DeviceTrafficRandom>();
 
-    CableDevice cb = new CableDevice();
+    //CableDevice cb = new CableDevice();
     ImageView trimg = new ImageView("file:src/main/resources/image/email1.png");
     ArrayList<ImageView> imgTraffics = new ArrayList<ImageView>();
     String traffic;
@@ -310,7 +310,7 @@ public class App extends AppController {
     private void initLeftSideBar() {
         this.leftSideBar.setCloudServerActionEvent((t) -> {
             byte number = workStation.getNumberOfCloudServers();
-            Device device = new ServerDevice(new ServerModel("CS" + number, "CS" + number, Byte.parseByte("0")));
+            Device device = new ServerDevice(new ServerModel("CS" + number, "CloudServer" + number, Byte.parseByte("0")));
             //device.setOnConnectEvent(onConnectEvent(device));
             //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
@@ -319,7 +319,7 @@ public class App extends AppController {
         });
         this.leftSideBar.setFogServerActionEvent((t) -> {
             byte number = workStation.getNumberOfFogServers();
-            ServerModel serverModel = new ServerModel("FS" + number, "FS" + number, Byte.parseByte("1"));
+            ServerModel serverModel = new ServerModel("FS" + number, "FogServer" + number, Byte.parseByte("1"));
             Device device = new ServerDevice(serverModel);
             //device.setOnConnectEvent(onConnectEvent(device));
             //device.setOnDeleteEvent(onDeleteDevice(device));
@@ -327,6 +327,17 @@ public class App extends AppController {
             CableDeviceController.workStation = workStation;
 
         });
+        this.leftSideBar.setProxyServerActionEvent((t) -> {
+            byte number = workStation.getNumberOfProxyServers();
+            ServerModel serverModel = new ServerModel("PS" + number, "ProxyServer" + number, Byte.parseByte("2"));
+            Device device = new ServerDevice(serverModel);
+            //device.setOnConnectEvent(onConnectEvent(device));
+            //device.setOnDeleteEvent(onDeleteDevice(device));
+            workStation.getChildren().add(device);
+            CableDeviceController.workStation = workStation;
+
+        });
+
         this.leftSideBar.setActuatorActionEvent((t) -> {
             byte number = workStation.getNumberOfActuators();
             Device device = new ActuatorDevice(new ActuatorModel("AT" + number, "Actuator" + number));

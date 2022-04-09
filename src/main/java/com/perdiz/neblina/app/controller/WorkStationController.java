@@ -17,6 +17,7 @@ public class WorkStationController extends AnchorPane {
     protected File selectedFile;
     protected byte numberOfCloudServers = 0;
     protected byte numberOfFogServers = 0;
+    protected byte numberOfProxyServers = 0;
     protected byte numberOfSensors = 0;
     protected byte numberOfActuators = 0;
     protected byte numberOfConnections = 0;
@@ -30,6 +31,10 @@ public class WorkStationController extends AnchorPane {
 
     public byte getNumberOfFogServers() {
         return ++numberOfFogServers;
+    }
+
+    public byte getNumberOfProxyServers() {
+        return ++numberOfProxyServers;
     }
 
     public byte getNumberOfSensors() {
@@ -47,6 +52,7 @@ public class WorkStationController extends AnchorPane {
         selectedFile = null;
         numberOfCloudServers = 0;
         numberOfFogServers = 0;
+        numberOfProxyServers = 0;
         numberOfSensors = 0;
         numberOfActuators = 0;
         numberOfConnections = 0;

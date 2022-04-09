@@ -24,6 +24,7 @@ public class LeftSideBar extends LeftSideBarController {
     private void init() {
         this.getChildren().add(new VBox(
                 cloudServerBtn,
+                proxyServerBtn,
                 fogServerBtn,
                 actuatorBtn,
                 sensorBtn,

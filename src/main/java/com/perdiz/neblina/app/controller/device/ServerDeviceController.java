@@ -38,6 +38,7 @@ import java.util.ArrayList;
 public class ServerDeviceController extends Device {
 
     protected ServerModel model;
+    protected boolean isOpen;
     protected Stage formStage1;
     protected Scene formScene1;
 
@@ -71,8 +72,25 @@ public class ServerDeviceController extends Device {
 
 
     public ServerDeviceController(ServerModel serverModel) {
-        super(serverModel, (serverModel.getLevel() == 0) ? new ImageResource(Resource.CLOUDSERVER) : new ImageResource(Resource.FOGSERVER));
+        super(serverModel, serverModel.getLevel() );
         this.model = serverModel;
+        // this.listVM = new ArrayList<TextField>();
+        /*for (int i = 0; i < this.model.getRamVM().size(); i++){
+            TextField ramVM = new TextField(this.model.getRamVM().get(i).toString());
+            ramVM.setPrefWidth(80);
+            this.listVM.add(ramVM);
+        }*/
+        this.init();
+    }
+
+    public ServerDeviceController(ServerModel serverModel, boolean inicial) {
+        super(serverModel, serverModel.getLevel());
+        this.model = serverModel;
+        this.isOpen = inicial;
+        Tooltip.install(
+                getIcon(),
+                new Tooltip(((int)this.model.getVmachines())+ " VMs\n" + this.model.getRamVM())
+        );
         // this.listVM = new ArrayList<TextField>();
         /*for (int i = 0; i < this.model.getRamVM().size(); i++){
             TextField ramVM = new TextField(this.model.getRamVM().get(i).toString());

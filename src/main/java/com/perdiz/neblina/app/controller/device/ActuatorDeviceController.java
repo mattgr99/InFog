@@ -6,12 +6,11 @@
 package com.perdiz.neblina.app.controller.device;
 
 import com.perdiz.neblina.app.iu.Device;
-import com.perdiz.neblina.app.resource.ImageResource;
-import com.perdiz.neblina.app.resource.Resource;
+import com.perdiz.neblina.app.resource.Icon;
 import com.perdiz.neblina.model.ActuatorModel;
-import com.perdiz.neblina.model.ServerModel;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.WindowEvent;
 
@@ -27,7 +26,7 @@ public class ActuatorDeviceController extends Device {
 
 
     public ActuatorDeviceController(ActuatorModel actuatorModel) {
-        super(actuatorModel, new ImageResource(Resource.ACTUATOR));
+        super(actuatorModel, new ImageView(Icon.AC_DARK.src));
         this.model = actuatorModel;
         this.init();
     }

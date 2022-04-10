@@ -5,15 +5,15 @@
  */
 package com.perdiz.neblina.app.controller;
 
+import com.perdiz.neblina.app.component.Footer;
 import javafx.scene.layout.BorderPane;
 
 /**
- *
  * @author alexander
  */
 public class AppController extends BorderPane {
 
-   
+    protected final Footer footer = new Footer();
 
     public AppController() {
     }

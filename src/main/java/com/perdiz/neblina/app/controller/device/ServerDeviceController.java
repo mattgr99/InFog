@@ -5,30 +5,30 @@
  */
 package com.perdiz.neblina.app.controller.device;
 
-import com.jfoenix.controls.JFXButton;
 import com.perdiz.neblina.app.iu.Device;
 import com.perdiz.neblina.app.iu.NumberField;
-import com.perdiz.neblina.app.resource.ImageResource;
-import com.perdiz.neblina.app.resource.Resource;
+import com.perdiz.neblina.app.resource.Icon;
 import com.perdiz.neblina.model.ServerModel;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+
 import javafx.scene.control.*;
 import javafx.scene.input.InputMethodEvent;
+
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
 
 import java.util.ArrayList;
 
@@ -72,7 +72,9 @@ public class ServerDeviceController extends Device {
 
 
     public ServerDeviceController(ServerModel serverModel) {
+
         super(serverModel, serverModel.getLevel() );
+
         this.model = serverModel;
         // this.listVM = new ArrayList<TextField>();
         /*for (int i = 0; i < this.model.getRamVM().size(); i++){

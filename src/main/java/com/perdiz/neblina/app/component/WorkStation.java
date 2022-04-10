@@ -12,11 +12,12 @@ import com.perdiz.neblina.app.component.device.CableDevice;
 import com.perdiz.neblina.app.component.device.SensorDevice;
 import com.perdiz.neblina.app.component.device.ServerDevice;
 import com.perdiz.neblina.app.controller.WorkStationController;
+
 import com.perdiz.neblina.app.controller.device.CableDeviceController;
 import com.perdiz.neblina.app.iu.Device;
-import com.perdiz.neblina.app.resource.ImageResource;
-import com.perdiz.neblina.app.resource.Resource;
+import com.perdiz.neblina.app.resource.Icon;
 import com.perdiz.neblina.model.*;
+
 
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -327,10 +328,12 @@ public class WorkStation extends WorkStationController {
                                                 CableDeviceController.workStation = this;
                                                 break;
                                             case 6:
-                                                ImageView icon6= new ImageResource(Resource.CARDIOGRAM);
+                                                ImageView icon6= new ImageView(Icon.SN_CARDIOGRAM.src);
                                                 getChildren().add(new SensorDevice(sensor, icon6));
+
                                                 CableDeviceController.workStation = this;
                                                 break;
+
                                             case 7:
                                                 ImageView icon7= new ImageView("file:src/main/resources/image/pulse-oximeter.png");
                                                 getChildren().add(new SensorDevice(sensor, icon7));

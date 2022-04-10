@@ -7,10 +7,8 @@ package com.perdiz.neblina.app.controller.device;
 
 import com.perdiz.neblina.app.iu.Device;
 import com.perdiz.neblina.app.iu.NumberField;
-import com.perdiz.neblina.app.resource.ImageResource;
-import com.perdiz.neblina.app.resource.Resource;
+import com.perdiz.neblina.app.resource.Icon;
 import com.perdiz.neblina.model.SensorModel;
-import com.perdiz.neblina.model.ServerModel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -38,7 +36,7 @@ public class SensorDeviceController extends Device {
     protected NumberField valueField;
 
     public SensorDeviceController(SensorModel sensorModel) {
-        super(sensorModel, new ImageResource(Resource.SENSOR));
+        super(sensorModel, new ImageView(Icon.SN_DARK.src));
         this.model = sensorModel;
 
         init();

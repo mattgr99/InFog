@@ -7,8 +7,7 @@ package com.perdiz.neblina.app.iu;
 
 import com.jfoenix.controls.JFXButton;
 import com.perdiz.neblina.app.controller.device.CableDeviceController;
-import com.perdiz.neblina.app.resource.ImageResource;
-import com.perdiz.neblina.app.resource.Resource;
+import com.perdiz.neblina.app.resource.Icon;
 import com.perdiz.neblina.model.DeviceModel;
 
 import java.awt.MouseInfo;
@@ -74,7 +73,7 @@ public abstract class Device extends VBox {
         if (level == 0) {
             this.icon = new ImageView("file:src/main/resources/image/cloud1Server.png");
         }else if (level == 1){
-            this.icon = new ImageResource(Resource.CLOUDSERVER);
+            this.icon = new ImageView(Icon.CS_DARK.src);
         } else if (level== 2){
             this.icon = new ImageView("file:src/main/resources/image/proxyserver.png");
         }

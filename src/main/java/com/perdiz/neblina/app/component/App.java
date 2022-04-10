@@ -13,8 +13,7 @@ import com.perdiz.neblina.app.component.device.ServerDevice;
 import com.perdiz.neblina.app.controller.AppController;
 import com.perdiz.neblina.app.controller.device.CableDeviceController;
 import com.perdiz.neblina.app.iu.Device;
-import com.perdiz.neblina.app.resource.ImageResource;
-import com.perdiz.neblina.app.resource.Resource;
+import com.perdiz.neblina.app.resource.Icon;
 import com.perdiz.neblina.charts.BarChartTraffic;
 import com.perdiz.neblina.charts.LineChartTraffic;
 import com.perdiz.neblina.heuristics.DeviceTraffic;
@@ -83,7 +82,7 @@ public class App extends AppController {
 
 
     //Sensor buttons
-    JFXButton btnCardiogram = new JFXButton("", new ImageResource(Resource.CARDIOGRAM));
+    JFXButton btnCardiogram = new JFXButton("", new ImageView(Icon.SN_CARDIOGRAM.src));
     JFXButton btnPulseOximeter = new JFXButton("", new ImageView("file:src/main/resources/image/pulse-oximeter.png"));
     JFXButton btnAirPurifier = new JFXButton("", new ImageView("file:src/main/resources/image/air-purifier.png"));
     JFXButton btnGlucometer = new JFXButton("", new ImageView("file:src/main/resources/image/glucometer.png"));
@@ -1017,7 +1016,7 @@ public class App extends AppController {
         return event -> {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,6 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageResource(Resource.CARDIOGRAM));
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_CARDIOGRAM.src));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };

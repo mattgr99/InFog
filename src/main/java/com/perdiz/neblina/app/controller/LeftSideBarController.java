@@ -6,8 +6,8 @@
 package com.perdiz.neblina.app.controller;
 
 import com.jfoenix.controls.JFXButton;
-import com.perdiz.neblina.app.resource.ImageResource;
-import com.perdiz.neblina.app.resource.Resource;
+
+import com.perdiz.neblina.app.resource.Icon;
 import javafx.event.EventHandler;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
@@ -15,20 +15,19 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 /**
- *
  * @author alexander
  */
 public class LeftSideBarController extends VBox {
 
-    protected JFXButton cloudServerBtn = new JFXButton("", new ImageResource(Resource.CLOUDSERVERLIGHT));
-    protected JFXButton fogServerBtn = new JFXButton("", new ImageResource(Resource.FOGSERVERLIGHT));
-    protected JFXButton actuatorBtn = new JFXButton("", new ImageResource(Resource.ACTUATORLIGHT));
-    protected JFXButton sensorBtn = new JFXButton("", new ImageResource(Resource.SENSORLIGHT));
-    protected JFXButton trafficBtn = new JFXButton("", new ImageView("file:src/main/resources/image/email1.png"));
-    protected JFXButton trafficRanBtn = new JFXButton("", new ImageView("file:src/main/resources/image/cartab.png"));
-    protected JFXButton chartBarBtn = new JFXButton("", new ImageView("file:src/main/resources/image/bar-graph.png"));
-    protected JFXButton chartLineVmBtn = new JFXButton("", new ImageView("file:src/main/resources/image/line-graph.png"));
-    protected JFXButton chartLineTrBtn = new JFXButton("", new ImageView("file:src/main/resources/image/statistics.png"));
+    protected JFXButton cloudServerBtn = new JFXButton("", new ImageView(Icon.CS_LIGHT.src));
+    protected JFXButton fogServerBtn = new JFXButton("", new ImageView(Icon.FS_LIGHT.src));
+    protected JFXButton actuatorBtn = new JFXButton("", new ImageView(Icon.AC_LIGHT.src));
+    protected JFXButton sensorBtn = new JFXButton("", new ImageView(Icon.SN_LIGHT.src));
+    protected JFXButton trafficBtn = new JFXButton("", new ImageView(Icon.TF_LIGHT.src));
+    protected JFXButton trafficRanBtn = new JFXButton("", new ImageView(Icon.TF_SHUFFLE_LIGHT.src));
+    protected JFXButton chartBarBtn = new JFXButton("", new ImageView(Icon.CHART_BAR_LIGHT.src));
+    protected JFXButton chartLineVmBtn = new JFXButton("", new ImageView(Icon.CHART_LINE_LIGHT.src));
+    protected JFXButton chartLineTrBtn = new JFXButton("", new ImageView(Icon.CHART_MULTILINE_LIGHT.src));
 
     public LeftSideBarController() {
         this.cloudServerBtn.setTooltip(new Tooltip("Cloud Server"));

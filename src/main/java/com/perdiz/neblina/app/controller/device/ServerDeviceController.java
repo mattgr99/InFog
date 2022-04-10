@@ -5,31 +5,24 @@
  */
 package com.perdiz.neblina.app.controller.device;
 
-import com.jfoenix.controls.JFXButton;
 import com.perdiz.neblina.app.iu.Device;
 import com.perdiz.neblina.app.iu.NumberField;
-import com.perdiz.neblina.app.resource.ImageResource;
-import com.perdiz.neblina.app.resource.Resource;
+import com.perdiz.neblina.app.resource.Icon;
 import com.perdiz.neblina.model.ServerModel;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.scene.input.InputMethodEvent;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
 
 import java.util.ArrayList;
 
@@ -57,7 +50,7 @@ public class ServerDeviceController extends Device {
     protected Double ramCompare = -1.0;
 
     public ServerDeviceController(ServerModel serverModel) {
-        super(serverModel, (serverModel.getLevel() == 0) ? new ImageResource(Resource.CLOUDSERVER) : new ImageResource(Resource.FOGSERVER));
+        super(serverModel, (serverModel.getLevel() == 0) ? new ImageView(Icon.CS_DARK.src) : new ImageView(Icon.FS_DARK.src));
         this.model = serverModel;
         // this.listVM = new ArrayList<TextField>();
         /*for (int i = 0; i < this.model.getRamVM().size(); i++){

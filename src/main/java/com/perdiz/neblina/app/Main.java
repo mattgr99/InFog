@@ -1,7 +1,6 @@
 package com.perdiz.neblina.app;
 
 import com.perdiz.neblina.app.component.App;
-import com.perdiz.neblina.app.resource.Icon;
 import com.perdiz.neblina.util.Console;
 import com.perdiz.neblina.util.Pkg;
 import javafx.application.Application;

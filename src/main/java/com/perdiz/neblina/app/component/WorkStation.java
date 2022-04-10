@@ -11,8 +11,6 @@ import com.perdiz.neblina.app.component.device.ActuatorDevice;
 import com.perdiz.neblina.app.component.device.SensorDevice;
 import com.perdiz.neblina.app.component.device.ServerDevice;
 import com.perdiz.neblina.app.controller.WorkStationController;
-import com.perdiz.neblina.app.resource.ImageResource;
-import com.perdiz.neblina.app.resource.Resource;
 import com.perdiz.neblina.model.ActuatorModel;
 import com.perdiz.neblina.model.SensorModel;
 import com.perdiz.neblina.model.ServerModel;
@@ -233,10 +231,10 @@ public class WorkStation extends WorkStationController {
                                                 ImageView icon5= new ImageView("file:src/main/resources/image/fingerprint.png");
                                                 getChildren().add(new SensorDevice(sensor, icon5));
                                                 break;
-                                            case 6:
-                                                ImageView icon6= new ImageResource(Resource.CARDIOGRAM);
+                                            /*case 6:
+                                                ImageView icon6= new ImageView(Resource.CARDIOGRAM);
                                                 getChildren().add(new SensorDevice(sensor, icon6));
-                                                break;
+                                                break;*/
                                             case 7:
                                                 ImageView icon7= new ImageView("file:src/main/resources/image/pulse-oximeter.png");
                                                 getChildren().add(new SensorDevice(sensor, icon7));

@@ -21,6 +21,7 @@ import com.perdiz.neblina.heuristics.DeviceTrafficRandom;
 import com.perdiz.neblina.heuristics.TrafficHeuristc;
 import com.perdiz.neblina.heuristics.TrafficRandomHeuristc;
 import com.perdiz.neblina.model.*;
+import com.perdiz.neblina.util.Pkg;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.beans.InvalidationListener;
@@ -38,6 +39,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -46,7 +49,6 @@ import javafx.util.Duration;
 import java.util.*;
 
 /**
- *
  * @author alexander
  */
 public class App extends AppController {
@@ -83,19 +85,19 @@ public class App extends AppController {
 
     //Sensor buttons
     JFXButton btnCardiogram = new JFXButton("", new ImageView(Icon.SN_CARDIOGRAM.src));
-    JFXButton btnPulseOximeter = new JFXButton("", new ImageView("file:src/main/resources/image/pulse-oximeter.png"));
-    JFXButton btnAirPurifier = new JFXButton("", new ImageView("file:src/main/resources/image/air-purifier.png"));
-    JFXButton btnGlucometer = new JFXButton("", new ImageView("file:src/main/resources/image/glucometer.png"));
-    JFXButton btnSmartTemperature = new JFXButton("", new ImageView("file:src/main/resources/image/smart-temperature.png"));
-    JFXButton btnSmartwatch = new JFXButton("", new ImageView("file:src/main/resources/image/smartwatch.png"));
-    JFXButton btnCameraHome = new JFXButton("", new ImageView("file:src/main/resources/image/cctv.png"));
-    JFXButton btnFingerPrint = new JFXButton("", new ImageView("file:src/main/resources/image/fingerprint.png"));
+    JFXButton btnPulseOximeter = new JFXButton("", new ImageView(Icon.SN_OXIMETER.src));
+    JFXButton btnAirPurifier = new JFXButton("", new ImageView(Icon.SN_PURIFIER.src));
+    JFXButton btnGlucometer = new JFXButton("", new ImageView(Icon.SN_GLUCOMETER.src));
+    JFXButton btnSmartTemperature = new JFXButton("", new ImageView(Icon.SN_TEMPERATURE.src));
+    JFXButton btnSmartwatch = new JFXButton("", new ImageView(Icon.SN_SMARTWATCH.src));
+    JFXButton btnCameraHome = new JFXButton("", new ImageView(Icon.SN_CCTV.src));
+    JFXButton btnFingerPrint = new JFXButton("", new ImageView(Icon.SN_FINGERPRINT.src));
 
-    JFXButton btnChargingStation = new JFXButton("", new ImageView("file:src/main/resources/image/charging-station.png"));
-    JFXButton btnLightSensor = new JFXButton("", new ImageView("file:src/main/resources/image/light-sensor.png"));
-    JFXButton btnLightMeter = new JFXButton("", new ImageView("file:src/main/resources/image/light-meter.png"));
-    JFXButton btnMotionSensor = new JFXButton("", new ImageView("file:src/main/resources/image/motion-sensor.png"));
-    JFXButton btnDriverlessCar = new JFXButton("", new ImageView("file:src/main/resources/image/driverless-car.png"));
+    JFXButton btnChargingStation = new JFXButton("", new ImageView(Icon.SN_CHARGIN_STATION.src));
+    JFXButton btnLightSensor = new JFXButton("", new ImageView(Icon.SN_LIGHT_SENSOR.src));
+    JFXButton btnLightMeter = new JFXButton("", new ImageView(Icon.SN_lIGHT_METER.src));
+    JFXButton btnMotionSensor = new JFXButton("", new ImageView(Icon.SN_MOTION.src));
+    JFXButton btnDriverlessCar = new JFXButton("", new ImageView(Icon.SN_DIVERLESS.src));
 
 
     public App() {
@@ -106,11 +108,14 @@ public class App extends AppController {
     }
 
     private void init() {
-        //items.clear();
-
+        VBox container = new VBox();
         ScrollPane workStationScroll = new ScrollPane(workStation);
+        VBox.setVgrow(workStationScroll, Priority.ALWAYS);
         workStationScroll.setFitToHeight(true);
         workStationScroll.setFitToWidth(true);
+
+        container.getChildren().addAll(workStationScroll, footer);
+
         this.latencyField = new TextField("");
         this.trafficField = new TextField("");
         this.timeExeField = new TextField("");
@@ -119,9 +124,14 @@ public class App extends AppController {
         this.timeDeviceField = new TextField("");
         this.setTop(toolBar);
         this.setLeft(leftSideBar);
-        this.setCenter(workStationScroll);
+        this.setCenter(container);
         this.setRight(rightSideBar);
 
+        footer.addLog("${Ib}", "=> " + Pkg.NAME + "@" + Pkg.VERSION + " running.");
+
+        // Examples of printing the logs
+        footer.addLog("${_}", "");
+        footer.addLog("${_} ${Sb_} ${_}", "Agregar servidores para ver la funcionalidad de ", "Log Viewer", "en acción.");
     }
 
     private void initToolBar() {
@@ -136,7 +146,7 @@ public class App extends AppController {
                 case "Undefined":
                     workStation.restartInitialsValues();
                     break;
-                    case "SaveFirst":
+                case "SaveFirst":
                     workStation.saveDocument();
                     workStation.restartInitialsValues();
                     break;
@@ -158,7 +168,7 @@ public class App extends AppController {
         this.toolBar.setOnPlayActionEvent((t) -> {
             //Work time server
             ArrayList<Integer> listr = new ArrayList<>();
-            for (Map.Entry<String, DeviceTraffic> von : slotsTrf.entrySet()){
+            for (Map.Entry<String, DeviceTraffic> von : slotsTrf.entrySet()) {
 
                 DeviceTraffic trafficDev = von.getValue();
 
@@ -176,8 +186,8 @@ public class App extends AppController {
 
             ArrayList<Integer> rmvms = new ArrayList<Integer>();
             ServerModel model = trafficServer();
-            TrafficHeuristc tf = new TrafficHeuristc((int)model.getVmachines(),slots.size());
-            for(int rv: model.getRamVM()){
+            TrafficHeuristc tf = new TrafficHeuristc((int) model.getVmachines(), slots.size());
+            for (int rv : model.getRamVM()) {
                 rmvms.add(rv);
             }
 
@@ -191,11 +201,11 @@ public class App extends AppController {
 
             launchFormRandomPlay();
 
-            if (isSetTime){
+            if (isSetTime) {
                 TrafficRandomHeuristc.vms_on.clear();
                 TrafficRandomHeuristc.slots.clear();
                 TrafficRandomHeuristc.energyServer.clear();
-                this.isSetTime =false;
+                this.isSetTime = false;
                 int stopTime = this.timeTraffic;
                 Timer timer = new Timer();
                 ServerModel model = trafficServer();
@@ -211,23 +221,23 @@ public class App extends AppController {
                     timtr.add((int)(Math.random()*(10-1+1)+1));
                 }*/
 
-                for(int rv: model.getRamVM()){
+                for (int rv : model.getRamVM()) {
                     rmvms.add(rv);
                 }
 
-                for(int tf1=0; tf1 < rmvms.size(); tf1++){
+                for (int tf1 = 0; tf1 < rmvms.size(); tf1++) {
                     ArrayList<Integer> baltr = new ArrayList<>();
                     baltr.add(0);
-                    finalDisTrf.put(tf1,baltr);
+                    finalDisTrf.put(tf1, baltr);
                 }
 
 
-                for(int exe=0; exe<nsen; exe++){
-                    if(this.trfDevice.get(nameSensors.get(exe)) == null){
+                for (int exe = 0; exe < nsen; exe++) {
+                    if (this.trfDevice.get(nameSensors.get(exe)) == null) {
                         continue;
                     }
                     DeviceTrafficRandom dvt = this.trfDevice.get(nameSensors.get(exe));
-                    TrafficRandomHeuristc ner1 = new TrafficRandomHeuristc((int)model.getVmachines(), rmvms, dvt.getTime(), nameSensors.get(exe),finalDisTrf, dvt.getFirstInterval(), dvt.getSecondInterval());
+                    TrafficRandomHeuristc ner1 = new TrafficRandomHeuristc((int) model.getVmachines(), rmvms, dvt.getTime(), nameSensors.get(exe), finalDisTrf, dvt.getFirstInterval(), dvt.getSecondInterval());
                     trsend.add(ner1);
                 }
 
@@ -247,17 +257,17 @@ public class App extends AppController {
                     @Override
                     public void run() {
 
-                        if (startP){
-                            for (TrafficRandomHeuristc sensor : trsend){
+                        if (startP) {
+                            for (TrafficRandomHeuristc sensor : trsend) {
                                 sensor.start();
                             }
                             startP = false;
                         }
 
-                        if (count > 0 ){
-                            if ((count%5) == 0){
+                        if (count > 0) {
+                            if ((count % 5) == 0) {
                                 //System.out.println((count%5) );
-                                for (TrafficRandomHeuristc sensor : trsend){
+                                for (TrafficRandomHeuristc sensor : trsend) {
                                     //sensor.setFnPr(true);
                                     sensor.suspend();
                                 }
@@ -268,7 +278,7 @@ public class App extends AppController {
                                 trsend.add(ner1);
                             }*/
 
-                                for (TrafficRandomHeuristc sensor : trsend){
+                                for (TrafficRandomHeuristc sensor : trsend) {
                                     sensor.resume();
                                     //sensor.setFnPr(false);
                                 }
@@ -277,10 +287,10 @@ public class App extends AppController {
                         }
 
 
-                        if (count == stopTime){
+                        if (count == stopTime) {
 
 
-                            for (TrafficRandomHeuristc sensor : trsend){
+                            for (TrafficRandomHeuristc sensor : trsend) {
                                 sensor.setFnPr(true);
                                 sensor.stop();
                             }
@@ -296,7 +306,7 @@ public class App extends AppController {
 
                     }
                 };
-                timer.schedule(tarea, 0,    1000);
+                timer.schedule(tarea, 0, 1000);
 
             }
         });
@@ -307,6 +317,7 @@ public class App extends AppController {
     }
 
     private void initLeftSideBar() {
+        String addedFormat = "${Ib_} ${}";
         this.leftSideBar.setCloudServerActionEvent((t) -> {
             byte number = workStation.getNumberOfCloudServers();
             Device device = new ServerDevice(new ServerModel("CS" + number, "CloudServer" + number, Byte.parseByte("0")));
@@ -314,6 +325,7 @@ public class App extends AppController {
             //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
+            footer.addLog(addedFormat, "Added =>", "CloudServer" + number);
 
         });
         this.leftSideBar.setFogServerActionEvent((t) -> {
@@ -324,6 +336,7 @@ public class App extends AppController {
             //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
+            footer.addLog(addedFormat, "Added =>", "FogServer" + number);
 
         });
         this.leftSideBar.setProxyServerActionEvent((t) -> {
@@ -334,6 +347,7 @@ public class App extends AppController {
             //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
+            footer.addLog(addedFormat, "Added =>", "ProxyServer" + number);
 
         });
 
@@ -344,6 +358,7 @@ public class App extends AppController {
             //device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
+            footer.addLog(addedFormat, "Added =>", "Actuator" + number);
         });
         this.leftSideBar.setSensorActionEvent((t) -> {
             launchFormSensors();
@@ -369,7 +384,7 @@ public class App extends AppController {
                 e.printStackTrace();
             }
 
-           // TrafficRandomHeuristc.energyServer.clear();
+            // TrafficRandomHeuristc.energyServer.clear();
 
         });
 
@@ -382,7 +397,7 @@ public class App extends AppController {
                 e.printStackTrace();
             }
 
-           // TrafficRandomHeuristc.vms_on.clear();
+            // TrafficRandomHeuristc.vms_on.clear();
 
         });
 
@@ -399,7 +414,7 @@ public class App extends AppController {
         });
 
         workStation.setOnMouseClicked((t) -> {
-            imgTraffics.forEach((item)->{
+            imgTraffics.forEach((item) -> {
                 workStation.getChildren().remove(item);
             });
             imgTraffics.clear();
@@ -413,22 +428,22 @@ public class App extends AppController {
      -                                  Events                              -
      ----------------------------------------------------------------------*/
 
-    protected ServerModel trafficServer(){
+    protected ServerModel trafficServer() {
         ServerModel model = null;
-        for (Node device : workStation.getChildren()){
+        for (Node device : workStation.getChildren()) {
             if (device instanceof ServerDevice) {
                 model = (ServerModel) ((ServerDevice) device).getModel();
                 break;
             }
         }
 
-      return model;
+        return model;
     }
 
-    protected int trafficSensor(){
+    protected int trafficSensor() {
         String nameSen = null;
         int sen = 0;
-        for (Node device : workStation.getChildren()){
+        for (Node device : workStation.getChildren()) {
             if (device instanceof SensorDevice) {
                 sen++;
             }
@@ -438,12 +453,12 @@ public class App extends AppController {
     }
 
 
-    protected ArrayList<String> nameSensor(){
+    protected ArrayList<String> nameSensor() {
 
-        ArrayList<String>namesS= new ArrayList<String>();
+        ArrayList<String> namesS = new ArrayList<String>();
         String nameSen = null;
 
-        for (Node device : workStation.getChildren()){
+        for (Node device : workStation.getChildren()) {
             if (device instanceof SensorDevice) {
                 nameSen = (String) ((SensorDevice) device).getModel().getName();
                 namesS.add(nameSen);
@@ -471,14 +486,14 @@ public class App extends AppController {
         };
     }
 
-    protected EventHandler<MouseEvent> onCancelRandomBtnClicked(){
+    protected EventHandler<MouseEvent> onCancelRandomBtnClicked() {
         return event -> {
-          this.timeExeField.setText("");
+            this.timeExeField.setText("");
             this.formStage.close();
         };
     }
 
-    protected void launchFormTraffic(){
+    protected void launchFormTraffic() {
 
         ObservableList<String> items = FXCollections.observableArrayList();
         addDestiny(items);
@@ -529,13 +544,13 @@ public class App extends AppController {
     }
 
     protected ChangeListener<String> onChangeTrafficField() {
-        return (ChangeListener<String>)(ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            if(newValue != null ) {
+        return (ChangeListener<String>) (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            if (newValue != null) {
 
-                if (slotsTrf.get(newValue)!= null){
+                if (slotsTrf.get(newValue) != null) {
                     DeviceTraffic dt = slotsTrf.get(newValue);
                     trafficField.setText(dt.getValTraffic());
-                }else {
+                } else {
                     trafficField.setText("");
                 }
 
@@ -544,7 +559,7 @@ public class App extends AppController {
         };
     }
 
-    protected void launchFormRandomTraffic(){
+    protected void launchFormRandomTraffic() {
 
         ObservableList<String> items = FXCollections.observableArrayList();
         addDestiny(items);
@@ -605,15 +620,15 @@ public class App extends AppController {
     }
 
     protected ChangeListener<String> onChangeTrafficRandomField() {
-        return (ChangeListener<String>)(ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            if(newValue != null ) {
+        return (ChangeListener<String>) (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            if (newValue != null) {
 
-                if (trfDevice.get(newValue)!= null){
+                if (trfDevice.get(newValue) != null) {
                     DeviceTrafficRandom dtr = trfDevice.get(newValue);
                     trafficRField1.setText("" + dtr.getFirstInterval());
                     trafficRField2.setText("" + dtr.getSecondInterval());
                     timeDeviceField.setText("" + dtr.getTime());
-                }else {
+                } else {
                     trafficRField1.setText("");
                     trafficRField2.setText("");
                     timeDeviceField.setText("");
@@ -624,7 +639,7 @@ public class App extends AppController {
         };
     }
 
-    protected void launchFormRandomPlay(){
+    protected void launchFormRandomPlay() {
 
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(10));
@@ -667,7 +682,7 @@ public class App extends AppController {
 
     }
 
-    private void animation1(ImageView img, Device deviceStart, Device deviceEnd){
+    private void animation1(ImageView img, Device deviceStart, Device deviceEnd) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(2000));
         tt.setNode(img);
         tt.setByX(deviceEnd.getLayoutX() - deviceStart.getLayoutX());
@@ -679,7 +694,7 @@ public class App extends AppController {
     }
 
 
-    public void addDestiny(ObservableList<String> items){
+    public void addDestiny(ObservableList<String> items) {
 
         workStation.getChildren().forEach((node) -> {
             if (node instanceof ServerDevice) {
@@ -706,20 +721,20 @@ public class App extends AppController {
             String valDevice;
             valDevice = cbx.getValue();
             ArrayList<Device> mList = new ArrayList<>();
-            connects.forEach((item)->{
+            connects.forEach((item) -> {
                 mList.add(item.getDevice1());
                 mList.add(item.getDevice2());
             });
 
 
             Device deviceTraf = devInstance(valDevice);
-            int countA=Collections.frequency(mList, deviceTraf);
-            if (countA!=0){
+            int countA = Collections.frequency(mList, deviceTraf);
+            if (countA != 0) {
                 DeviceTraffic trfInstance = new DeviceTraffic(trafficField.getText());
-                slotsTrf.put(cbx.getValue(),trfInstance);
+                slotsTrf.put(cbx.getValue(), trfInstance);
 
-                connects.forEach((itDev)->{
-                    if (itDev.getDevice1()==deviceTraf){
+                connects.forEach((itDev) -> {
+                    if (itDev.getDevice1() == deviceTraf) {
 
                         this.traffic = this.trafficField.getText();
                         //System.out.printf("%s\n",this.traffic);
@@ -737,7 +752,7 @@ public class App extends AppController {
 
                     }
 
-                    if (itDev.getDevice2()==deviceTraf){
+                    if (itDev.getDevice2() == deviceTraf) {
                         this.traffic = this.trafficField.getText();
                         //System.out.printf("%s\n",this.traffic);
                         ImageView rect = new ImageView("file:src/main/resources/image/email1.png");
@@ -755,7 +770,7 @@ public class App extends AppController {
 
                 });
 
-            }else{
+            } else {
                 System.out.println("Device is not in traffic");
                 //slots.remove(Integer.parseInt(trafficField.getText()));
             }
@@ -769,24 +784,24 @@ public class App extends AppController {
         //System.out.println("Node" + i[0]);
         return event -> {
             //slots.add(Integer.parseInt(trafficField.getText()));
-            DeviceTrafficRandom dvt = new DeviceTrafficRandom(Integer.parseInt(this.trafficRField1.getText()),Integer.parseInt(this.trafficRField2.getText()), Integer.parseInt(this.timeDeviceField.getText()));
+            DeviceTrafficRandom dvt = new DeviceTrafficRandom(Integer.parseInt(this.trafficRField1.getText()), Integer.parseInt(this.trafficRField2.getText()), Integer.parseInt(this.timeDeviceField.getText()));
             String valDevice;
             valDevice = cbx.getValue();
-            this.trfDevice.put(valDevice,dvt);
+            this.trfDevice.put(valDevice, dvt);
 
             //System.out.println(trfDevice);
             ArrayList<Device> mList = new ArrayList<>();
-            connects.forEach((item)->{
+            connects.forEach((item) -> {
                 mList.add(item.getDevice1());
                 mList.add(item.getDevice2());
             });
 
 
             Device deviceTraf = devInstance(valDevice);
-            int countA=Collections.frequency(mList, deviceTraf);
-            if (countA!=0){
-                connects.forEach((itDev)->{
-                    if (itDev.getDevice1()==deviceTraf){
+            int countA = Collections.frequency(mList, deviceTraf);
+            if (countA != 0) {
+                connects.forEach((itDev) -> {
+                    if (itDev.getDevice1() == deviceTraf) {
 
                         this.traffic = this.trafficField.getText();
                         //System.out.printf("%s\n",this.traffic);
@@ -804,7 +819,7 @@ public class App extends AppController {
 
                     }
 
-                    if (itDev.getDevice2()==deviceTraf){
+                    if (itDev.getDevice2() == deviceTraf) {
                         this.traffic = this.trafficField.getText();
                         //System.out.printf("%s\n",this.traffic);
                         ImageView rect = new ImageView("file:src/main/resources/image/digital.png");
@@ -822,7 +837,7 @@ public class App extends AppController {
 
                 });
 
-            }else{
+            } else {
                 System.out.println("Device is not in traffic");
                 this.trfDevice.remove(valDevice);
             }
@@ -833,34 +848,34 @@ public class App extends AppController {
         };
     }
 
-    protected EventHandler onOkBtnRandomPlayClicked(){
+    protected EventHandler onOkBtnRandomPlayClicked() {
         return event -> {
             this.timeTraffic = (Integer.parseInt(timeExeField.getText())) * 60;
-            this.isSetTime =true;
+            this.isSetTime = true;
             this.formStage.close();
         };
 
     }
 
-    public Device devInstance(String nameDev){
-        Device devTr=null;
-        for (Node node:workStation.getChildren()){
+    public Device devInstance(String nameDev) {
+        Device devTr = null;
+        for (Node node : workStation.getChildren()) {
             if (node instanceof ServerDevice) {
                 ServerModel model = (ServerModel) ((ServerDevice) node).getModel();
-                if (model.getName().equals(nameDev)){
+                if (model.getName().equals(nameDev)) {
                     devTr = (Device) node;
                     break;
                 }
 
             } else if (node instanceof SensorDevice) {
                 SensorModel model = (SensorModel) ((SensorDevice) node).getModel();
-                if (model.getName().equals(nameDev)){
+                if (model.getName().equals(nameDev)) {
                     devTr = (Device) node;
                     break;
                 }
             } else if (node instanceof ActuatorDevice) {
                 ActuatorModel model = (ActuatorModel) ((ActuatorDevice) node).getModel();
-                if (model.getName().equals(nameDev)){
+                if (model.getName().equals(nameDev)) {
                     devTr = (Device) node;
                     break;
                 }
@@ -874,7 +889,7 @@ public class App extends AppController {
      *  Menu Options Sensor Devices
      */
 
-    protected void launchFormSensors(){
+    protected void launchFormSensors() {
 
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(10));
@@ -947,7 +962,7 @@ public class App extends AppController {
         formStage.initModality(Modality.WINDOW_MODAL);
         formStage.initOwner(primaryStage);
         formStage.setResizable(false);
-        formStage.setTitle("Sensor Devices" );
+        formStage.setTitle("Sensor Devices");
         formStage.showAndWait();
         formStage.close();
 
@@ -955,7 +970,8 @@ public class App extends AppController {
 
 
     /**
-     *          EVENTS BUTTONS, CREATE SENSOR DEVICES
+     * EVENTS BUTTONS, CREATE SENSOR DEVICES
+     *
      * @return
      */
 
@@ -963,8 +979,8 @@ public class App extends AppController {
     protected EventHandler<MouseEvent> onCameraHomeBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,1 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/cctv.png"));
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 1);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_CCTV.src));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -973,8 +989,8 @@ public class App extends AppController {
     protected EventHandler<MouseEvent> onAirPurifierBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,2 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/air-purifier.png"));
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 2);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_PURIFIER.src));
             workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
         };
@@ -983,10 +999,10 @@ public class App extends AppController {
     protected EventHandler<MouseEvent> onMotionSensorBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,3 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/motion-sensor.png"));
-            workStation.getChildren().add(device);
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 3);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_MOTION.src));
             CableDeviceController.workStation = workStation;
+            workStation.getChildren().add(device);
         };
     }
 
@@ -994,10 +1010,10 @@ public class App extends AppController {
     protected EventHandler<MouseEvent> onLightSensorBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,4 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/light-sensor.png"));
-            workStation.getChildren().add(device);
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 4);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_LIGHT_SENSOR.src));
             CableDeviceController.workStation = workStation;
+            workStation.getChildren().add(device);
         };
     }
 
@@ -1005,30 +1021,30 @@ public class App extends AppController {
     protected EventHandler<MouseEvent> onFingerPrintBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,5 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/fingerprint.png"));
-            workStation.getChildren().add(device);
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 5);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_FINGERPRINT.src));
             CableDeviceController.workStation = workStation;
+            workStation.getChildren().add(device);
         };
     }
 
     protected EventHandler<MouseEvent> onCardiogramBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,6 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 6);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_CARDIOGRAM.src));
-            workStation.getChildren().add(device);
             CableDeviceController.workStation = workStation;
+            workStation.getChildren().add(device);
         };
     }
 
     protected EventHandler<MouseEvent> onPulseOximeterBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,7 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/pulse-oximeter.png"));
-            workStation.getChildren().add(device);
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 7);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_OXIMETER.src));
             CableDeviceController.workStation = workStation;
+            workStation.getChildren().add(device);
         };
     }
 
@@ -1036,61 +1052,61 @@ public class App extends AppController {
     protected EventHandler<MouseEvent> onGlucometerBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,8 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/glucometer.png"));
-            workStation.getChildren().add(device);
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 8);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_GLUCOMETER.src));
             CableDeviceController.workStation = workStation;
+            workStation.getChildren().add(device);
         };
     }
 
     protected EventHandler<MouseEvent> onSmartTemperatureBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,9 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/smart-temperature.png"));
-            workStation.getChildren().add(device);
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 9);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_TEMPERATURE.src));
             CableDeviceController.workStation = workStation;
+            workStation.getChildren().add(device);
         };
     }
 
     protected EventHandler<MouseEvent> onbtnSmartwatchBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,10 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/smartwatch.png"));
-
-            workStation.getChildren().add(device);
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 10);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_SMARTWATCH.src));
             CableDeviceController.workStation = workStation;
+            workStation.getChildren().add(device);
         };
     }
 
     protected EventHandler<MouseEvent> onLightMeterBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,11 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/light-meter.png"));
-            workStation.getChildren().add(device);
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 11);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_lIGHT_METER.src));
             CableDeviceController.workStation = workStation;
+            workStation.getChildren().add(device);
         };
     }
 
     protected EventHandler<MouseEvent> onDriverlessCarBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,12 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/driverless-car.png"));
-            workStation.getChildren().add(device);
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 12);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_DIVERLESS.src));
             CableDeviceController.workStation = workStation;
+            workStation.getChildren().add(device);
         };
     }
 
     protected EventHandler<MouseEvent> onChargingStationBtnClicked() {
         return event -> {
             byte number = workStation.getNumberOfSensors();
-            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number,13 /*new ImageView("file:src/main/resources/image/cctv.png")*/);
-            Device device = new SensorDevice(sensorModel, new ImageView("file:src/main/resources/image/charging-station.png"));
-            workStation.getChildren().add(device);
+            SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 13);
+            Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_CHARGIN_STATION.src));
             CableDeviceController.workStation = workStation;
+            workStation.getChildren().add(device);
         };
     }
+
 }

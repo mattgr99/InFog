@@ -6,7 +6,6 @@ import com.perdiz.neblina.util.Console;
 import com.perdiz.neblina.util.Pkg;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -20,6 +19,7 @@ public class Main extends Application {
         scene.getStylesheets().addAll("file:src/main/resources/style/AppStyle.css");
         stage.getIcons().add(Pkg.LOGO);
         stage.setTitle(Pkg.NAME);
+        stage.setMaximized(true);
         stage.setScene(scene);
         stage.show();
 

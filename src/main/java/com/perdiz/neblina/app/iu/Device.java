@@ -53,8 +53,6 @@ public abstract class Device extends VBox {
     private Popup popup;
 
 
-
-
     public Device(DeviceModel device, ImageView icon) {
 
         this.device = device;
@@ -71,11 +69,11 @@ public abstract class Device extends VBox {
 
         this.device = device;
         if (level == 0) {
-            this.icon = new ImageView("file:src/main/resources/image/cloud1Server.png");
-        }else if (level == 1){
             this.icon = new ImageView(Icon.CS_DARK.src);
-        } else if (level== 2){
-            this.icon = new ImageView("file:src/main/resources/image/proxyserver.png");
+        } else if (level == 1) {
+            this.icon = new ImageView(Icon.FS_DARK.src);
+        } else if (level == 2) {
+            this.icon = new ImageView(Icon.FS_LIGHT.src);
         }
 
         setLayoutX(device.getX());
@@ -86,16 +84,15 @@ public abstract class Device extends VBox {
         init();
     }
 
-    public Device(DeviceModel device){
+    public Device(DeviceModel device) {
         this.device = device;
 
     }
 
-    public Device(){
+    public Device() {
 
 
     }
-
 
 
     private void init() {
@@ -103,7 +100,6 @@ public abstract class Device extends VBox {
         popup = new Popup();
 
         popup.getContent().addAll(popupContent());
-
 
 
         this.getChildren().addAll(icon, nameLbl);
@@ -147,7 +143,6 @@ public abstract class Device extends VBox {
             device.setY(getLayoutY());
         });
     }
-
 
 
     private VBox popupContent() {
@@ -234,19 +229,21 @@ public abstract class Device extends VBox {
 
     protected void launchFormStage1() {
 
-        CableDeviceController cdc= new CableDeviceController(device);
+        CableDeviceController cdc = new CableDeviceController(device);
         cdc.activityFormCable();
 
     }
 
     protected void deleteDeviceAction() {
 
-        CableDeviceController deleteDev= new CableDeviceController(device, false);
+        CableDeviceController deleteDev = new CableDeviceController(device, false);
         deleteDev.deleteDevice();
 
     }
 
-    public ImageView getIcon() { return icon; }
+    public ImageView getIcon() {
+        return icon;
+    }
 
     public void setDevice(DeviceModel device) {
         this.device = device;

@@ -9,7 +9,7 @@
     LeftSideBar
 */
 .LeftSideBar{
-    -fx-background-color: "#424242";  
+    -fx-background-color: tundora-500;  
     -fx-text-fill: "#ffffff";
     -fx-background-radius: 0px;
     -fx-background-insets: 0px;
@@ -28,6 +28,57 @@
 
 }
 
-.MenuItem{
-    
+/********************************************************************
+*                              FOOTER                               *
+********************************************************************/
+.footer-container{
+    -fx-background-color: tundora-500;
+    -fx-border-width: 2px 0 0 1px;
+    -fx-border-color: tundora-500 transparent transparent tundora-600;
+}
+.footer-content{
+    -fx-background-color: tundora-400;
+    -fx-padding: 2px 5px;
+}
+
+.footer-btn{
+    -fx-background-radius: 0px;
+    -fx-text-fill: white;
+}
+.footer-btn:hover{
+    -fx-background-color: tundora-600;
+    -fx-font-weight: bold;
+}
+
+/********************************************************************
+*                          SCROLL PANE                              *
+********************************************************************/
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:horizontal, .scroll-bar:vertical{
+    -fx-background-color:transparent;
+}
+
+.increment-button, .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track{
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 5em;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(25,25,25,0.2);
+    -fx-background-radius: 2px;
+}
+.scroll-pane > .corner {
+    -fx-background-color: transparent;
 }

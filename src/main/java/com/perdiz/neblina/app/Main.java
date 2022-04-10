@@ -1,6 +1,7 @@
 package com.perdiz.neblina.app;
 
 import com.perdiz.neblina.app.component.App;
+import com.perdiz.neblina.app.resource.CssColor;
 import com.perdiz.neblina.util.Console;
 import com.perdiz.neblina.util.Pkg;
 import javafx.application.Application;
@@ -13,6 +14,8 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         App app = new App();
+        app.setStyle(String.join(";", CssColor.TUNDORA));
+
         Scene scene = new Scene(app, 900, 600);
         scene.getStylesheets().addAll("file:src/main/resources/style/AppStyle.css");
         stage.getIcons().add(Pkg.LOGO);

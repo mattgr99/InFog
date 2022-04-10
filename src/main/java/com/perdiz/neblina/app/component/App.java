@@ -22,6 +22,7 @@ import com.perdiz.neblina.model.ActuatorModel;
 import com.perdiz.neblina.model.CableModel;
 import com.perdiz.neblina.model.SensorModel;
 import com.perdiz.neblina.model.ServerModel;
+import com.perdiz.neblina.util.Pkg;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
@@ -36,6 +37,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
@@ -54,6 +57,7 @@ public class App extends AppController {
     private final RightSideBar rightSideBar = new RightSideBar();
     private final LeftSideBar leftSideBar = new LeftSideBar();
     private final WorkStation workStation = new WorkStation();
+
     protected Stage formStage;
     protected Scene formScene;
     protected TextField latencyField;
@@ -109,9 +113,14 @@ public class App extends AppController {
     private void init() {
         //items.clear();
 
+        VBox container = new VBox();
         ScrollPane workStationScroll = new ScrollPane(workStation);
+        VBox.setVgrow(workStationScroll, Priority.ALWAYS);
         workStationScroll.setFitToHeight(true);
         workStationScroll.setFitToWidth(true);
+
+        container.getChildren().addAll(workStationScroll, footer);
+
         this.latencyField = new TextField("");
         this.trafficField = new TextField("");
         this.timeExeField = new TextField("");
@@ -120,8 +129,19 @@ public class App extends AppController {
         this.timeDeviceField = new TextField("");
         this.setTop(toolBar);
         this.setLeft(leftSideBar);
-        this.setCenter(workStationScroll);
+        this.setCenter(container);
         this.setRight(rightSideBar);
+
+        footer.addLog("${Ib}", "=> " + Pkg.NAME + "@" + Pkg.VERSION + " running. aaa");
+
+        // Examples of printing the logs
+        String lorem = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+        footer.addLog("${b_} ${}", "NORMAL:", lorem);
+        footer.addLog("${Sb_} ${S}", "EXITO:", lorem);
+        footer.addLog("${Ib_} ${I}", "INFO:", lorem);
+        footer.addLog("${Wb_} ${W}", "WARNING:", lorem);
+        footer.addLog("${Eb_} ${E}", "ERROR:", lorem);
+
 
     }
 
@@ -292,12 +312,15 @@ public class App extends AppController {
     }
 
     private void initLeftSideBar() {
+        String addedFormat = "${Ib_} ${}";
         this.leftSideBar.setCloudServerActionEvent((t) -> {
             byte number = workStation.getNumberOfCloudServers();
+
             Device device = new ServerDevice(new ServerModel("CS" + number, "CS" + number, Byte.parseByte("0")));
             device.setOnConnectEvent(onConnectEvent(device));
             device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
+            footer.addLog(addedFormat, "Added =>", "CS" + number);
         });
         this.leftSideBar.setFogServerActionEvent((t) -> {
             byte number = workStation.getNumberOfFogServers();
@@ -305,6 +328,7 @@ public class App extends AppController {
             device.setOnConnectEvent(onConnectEvent(device));
             device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
+            footer.addLog(addedFormat, "Added =>", "FS" + number);
         });
         this.leftSideBar.setActuatorActionEvent((t) -> {
             byte number = workStation.getNumberOfActuators();
@@ -312,6 +336,7 @@ public class App extends AppController {
             device.setOnConnectEvent(onConnectEvent(device));
             device.setOnDeleteEvent(onDeleteDevice(device));
             workStation.getChildren().add(device);
+            footer.addLog(addedFormat, "Added =>", "Actuator" + number);
         });
         this.leftSideBar.setSensorActionEvent((t) -> {
             launchFormSensors();

@@ -13,7 +13,7 @@ import javafx.scene.layout.BorderPane;
  */
 public class AppController extends BorderPane {
 
-    protected final Footer footer = new Footer();
+    public static final Footer footer = new Footer();
 
     public AppController() {
     }

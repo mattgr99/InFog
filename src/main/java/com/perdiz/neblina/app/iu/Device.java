@@ -9,11 +9,8 @@ import com.jfoenix.controls.JFXButton;
 import com.perdiz.neblina.app.controller.device.CableDeviceController;
 import com.perdiz.neblina.app.resource.Icon;
 import com.perdiz.neblina.model.DeviceModel;
-
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.util.UUID;
-
 import com.perdiz.neblina.model.ServerModel;
 import com.perdiz.neblina.util.Console;
 import javafx.event.EventHandler;
@@ -24,8 +21,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.*;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -38,15 +33,11 @@ public abstract class Device extends VBox {
 
     protected Stage formStage;
     protected Scene formScene;
-    protected Scene formSceneCable;
     protected Label nameLbl;
-
     private double positionX;
     private double positionY;
-
     protected DeviceModel device;
     private /*final*/ ImageView icon;
-
     private JFXButton connectMenuItem;
     private JFXButton deleteMenuItem;
     private JFXButton editMenuItem;

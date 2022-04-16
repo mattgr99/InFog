@@ -4,8 +4,11 @@ import com.perdiz.neblina.util.Console;
 
 import java.util.*;
 
+import static com.perdiz.neblina.app.controller.AppController.footer;
+
 public class TrafficHeuristc {
     private Hashtable<Integer, ArrayList> vmTurnOn;
+    private String nameFogServer;
     private int Delta;  // slot duration (s)
     private int Ns;     //Number of physical server
     private int M_max;  //Maximum number of Vms per physical servers
@@ -28,7 +31,8 @@ public class TrafficHeuristc {
     private double delta_shaping_factor;
     private double outputEnergy_server;
 
-    public TrafficHeuristc(int vms, int cin){
+    public TrafficHeuristc(int vms, int cin, String nameFg){
+        this.nameFogServer = nameFg;
         this.vmTurnOn = new Hashtable<>();
         this.Delta = 1;
         this.Ns = 1;
@@ -87,13 +91,17 @@ public class TrafficHeuristc {
         Enumeration<Integer> ekeys = trfAccept.keys();
 
         System.out.println("--------------Load Server------------------");
+        footer.addLog("${_}", "--------------Load Server------------------");
         for (int i=0; i<this.CIN; i++){
 
             time_start = System.currentTimeMillis();
-            System.out.println("Server 1 ");
+            System.out.println("Server: " + this.nameFogServer);
+            footer.addLog("${_}", "Server: " + this.nameFogServer);
             System.out.println("Traffic "+ cin1.get(i));
+            footer.addLog("${_}", "Traffic "+ cin1.get(i));
             if(cin1.get(i) > (this.Ns * this.M_max * f_max * (this.Delta - this.T_on_server - this.T_on_vm))){
                 System.out.println("Consolidation unfeasible at slot " + cin1.get(i));
+                footer.addLog("${_}", "Consolidation unfeasible at slot " + cin1.get(i));
                // System.out.println(" " + (this.Ns * this.M_max * f_max * (this.Delta - this.T_on_server - this.T_on_vm)));
                 continue;
             }
@@ -161,13 +169,19 @@ public class TrafficHeuristc {
                                     trfList.put(vm1,balanceImp);
 
                                     System.out.println("-------Transfer traffic " + trfTransfer + " (VM " + (vm1+1) + " RAM " + copyRam.get(vm1) + " Mb) " + "to VM " + (vm2+1) + " RAM " + copyRam.get(vm2)+ " Mb-------");
+                                    footer.addLog("${_}", "-------Transfer traffic " + trfTransfer + " (VM " + (vm1+1) + " RAM " + copyRam.get(vm1) + " Mb) " + "to VM " + (vm2+1) + " RAM " + copyRam.get(vm2)+ " Mb-------");
                                     System.out.println("In Use: " + (copyRam.get(vm2) - ramVM.get(vm2)) + "Mb ");
+                                    footer.addLog("${_}", "In Use: " + (copyRam.get(vm2) - ramVM.get(vm2)) + "Mb ");
                                     System.out.println("Available: " + ramVM.get(vm2) + "Mb ");
+                                    footer.addLog("${_}", "Available: " + ramVM.get(vm2) + "Mb ");
                                     System.out.println("----------------------------------------------------------------");
-
+                                    footer.addLog("${_}", "----------------------------------------------------------------");
                                     System.out.println("-------Process in VM " + (vm1+1) + " Total RAM Memory: " + copyRam.get(vm1) + " Mb-------");
+                                    footer.addLog("${_}", "-------Process in VM " + (vm1+1) + " Total RAM Memory: " + copyRam.get(vm1) + " Mb-------");
                                     System.out.println("In Use: " + (copyRam.get(vm1) - ramVM.get(vm1)) + "Mb ");
+                                    footer.addLog("${_}", "In Use: " + (copyRam.get(vm1) - ramVM.get(vm1)) + "Mb ");
                                     System.out.println("Available: " + ramVM.get(vm1) + "Mb ");
+                                    footer.addLog("${_}", "Available: " + ramVM.get(vm1) + "Mb ");
                                     flag = true;
                                     break;
 
@@ -222,10 +236,14 @@ public class TrafficHeuristc {
                     trfList.put(pos,balanceTrf);
                     ramVM.set(pos,vmOptimum);
                     System.out.println("-------Process in VM " + (pos+1) + " Total RAM Memory: " + copyRam.get(pos) + " Mb-------");
+                    footer.addLog("${_}", "-------Process in VM " + (pos+1) + " Total RAM Memory: " + copyRam.get(pos) + " Mb-------");
                     System.out.println("In Use: " + (copyRam.get(pos) - ramVM.get(pos)) + "Mb ");
+                    footer.addLog("${_}", "In Use: " + (copyRam.get(pos) - ramVM.get(pos)) + "Mb ");
                     System.out.println("Available: " + ramVM.get(pos) + "Mb ");
+                    footer.addLog("${_}", "Available: " + ramVM.get(pos) + "Mb ");
                 }else{
                     System.out.println("The VMs don't support the traffic "+ cin1.get(i));
+                    footer.addLog("${_}", "The VMs don't support the traffic "+ cin1.get(i));
 
                 }
             }
@@ -234,7 +252,9 @@ public class TrafficHeuristc {
             System.out.println("");
             time_end = System.currentTimeMillis();
             System.out.println("The task has taken "+ ( time_end - time_start ) +" ms");
+            footer.addLog("${_}", "The task has taken "+ ( time_end - time_start ) +" ms");
             System.out.println("****************************************");
+            footer.addLog("${_}", "****************************************");
             System.out.println("");
             //System.out.println(vmOn);
             vmOn=0;
@@ -242,6 +262,7 @@ public class TrafficHeuristc {
             firstTrf =false;
             ekey = trfAccept.keys();
             System.out.println(trfList);
+            footer.addLog("${_}", "" + trfList);
             //System.out.println(trfAccept);
 
             while(ekey.hasMoreElements()){
@@ -275,6 +296,7 @@ public class TrafficHeuristc {
         this.vmTurnOn = trfList;
         //System.out.println("Cost server: " + this.x);
         System.out.println("--------------------------------");
+        footer.addLog("${_}", "--------------------------------");
 
     }
 
@@ -302,8 +324,11 @@ public class TrafficHeuristc {
                 (Math.pow(f_zero/f_max,v)) + this.k_e * this.SS * (Math.pow(this.f_zero - this.y,2))));
 
         System.out.println("Energy Server");
+        footer.addLog("${_}", "Energy Server");
         System.out.println("");
+        footer.addLog("${_}", "");
         System.out.println(this.outputEnergy_server);
+        footer.addLog("${_}", ""+this.outputEnergy_server);
         this.m = 0;
 
 

@@ -20,9 +20,9 @@ import javafx.scene.layout.VBox;
 public class LeftSideBarController extends VBox {
 
 
-    protected JFXButton cloudServerBtn = new JFXButton("", new ImageView(Icon.CS_LIGHT.src));
-    protected JFXButton fogServerBtn = new JFXButton("", new ImageView(Icon.FS_LIGHT.src));
-    protected JFXButton proxyServerBtn = new JFXButton("", new ImageView(Icon.FS_LIGHT.src));
+    protected JFXButton cloudServerBtn = new JFXButton("", new ImageView(Icon.CS_NEW.src));
+    protected JFXButton fogServerBtn = new JFXButton("", new ImageView(Icon.CS_LIGHT.src));
+    protected JFXButton proxyServerBtn = new JFXButton("", new ImageView(Icon.PS_LIGHT.src));
     protected JFXButton actuatorBtn = new JFXButton("", new ImageView(Icon.AC_LIGHT.src));
     protected JFXButton sensorBtn = new JFXButton("", new ImageView(Icon.SN_LIGHT.src));
     protected JFXButton trafficBtn = new JFXButton("", new ImageView(Icon.TF_LIGHT.src));

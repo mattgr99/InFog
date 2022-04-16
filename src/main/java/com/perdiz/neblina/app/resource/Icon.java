@@ -13,7 +13,12 @@ public enum Icon {
     /**
      * Cloud server dark icon
      */
-    CS_DARK("/CloudServer.png"),
+    CS_DARK("/cloud1Server.png"),
+
+    /**
+     * Cloud server new icon
+     */
+    CS_NEW("/cloud-network.png"),
 
     /**
      * Cloud server light icon
@@ -23,12 +28,17 @@ public enum Icon {
     /**
      * Fog server dark icon
      */
-    FS_DARK("/FogServer.png"),
+    FS_DARK("/CloudServer.png"),
 
     /**
      * Fog server light icon
      */
-    FS_LIGHT("/FogServerLight.png"),
+    FS_LIGHT("/proxyserver.png"),
+
+    /**
+     * Proxy server light icon
+     */
+    PS_LIGHT("/server.png"),
 
     /**
      * Actuator dark icon

@@ -70,6 +70,7 @@ public class App extends AppController {
     public static ArrayList<CableModel> connects = new ArrayList<CableModel>();
     ArrayList<Integer> slots = new ArrayList<Integer>();
     public static Hashtable<String, DeviceTraffic> slotsTrf = new Hashtable<String, DeviceTraffic>();
+    public static Hashtable<String, ArrayList<Integer>> serverTrf = new Hashtable<String, ArrayList<Integer>>();
     public static Hashtable<String, DeviceTrafficRandom> trfDevice = new Hashtable<String, DeviceTrafficRandom>();
 
     //CableDevice cb = new CableDevice();
@@ -131,7 +132,7 @@ public class App extends AppController {
 
         // Examples of printing the logs
         footer.addLog("${_}", "");
-        footer.addLog("${_} ${Sb_} ${_}", "Agregar servidores para ver la funcionalidad de ", "Log Viewer", "en acción.");
+        //footer.addLog("${_} ${Sb_} ${_}", "Agregar servidores para ver la funcionalidad de ", "Log Viewer", "en acción.");
     }
 
     private void initToolBar() {
@@ -171,29 +172,49 @@ public class App extends AppController {
             for (Map.Entry<String, DeviceTraffic> von : slotsTrf.entrySet()) {
 
                 DeviceTraffic trafficDev = von.getValue();
+                String nameS =  getnameServer(trafficDev.getNameSensor());
+                //System.out.println(nameS +" +");
+                if (serverTrf.get(nameS)  != null) {
+                    ArrayList<Integer> listrServer = serverTrf.get(nameS);
+                    listrServer.add(Integer.parseInt(trafficDev.getValTraffic()));
+                    serverTrf.put(nameS,listrServer);
+                    //System.out.println(serverTrf);
+                }else{
+                    ArrayList<Integer> listrServer = new ArrayList<>();
+                    listrServer.add(Integer.parseInt(trafficDev.getValTraffic()));
+                    serverTrf.put(nameS,listrServer);
+                    //System.out.println(serverTrf);
+                }
 
-                listr.add(Integer.parseInt(trafficDev.getValTraffic()));
+
+                //listr.add(Integer.parseInt(trafficDev.getValTraffic()));
                 //pos = von.getKey();
 
             }
 
-            int sizelist = listr.size() - 1;
+           /* int sizelist = listr.size() - 1;
 
             for (int i = 0; i < listr.size(); i++) {
                 slots.add(listr.get(sizelist));
                 sizelist--;
+            }*/
+
+            for (Map.Entry<String, ArrayList<Integer>> von : serverTrf.entrySet()) {
+                ArrayList<Integer> rmvms = new ArrayList<Integer>();
+
+                ServerModel model = trafficServer(von.getKey());
+                //System.out.println(model.getName());
+                TrafficHeuristc tf = new TrafficHeuristc((int) model.getVmachines(), von.getValue().size(), model.getName());
+                for (int rv : model.getRamVM()) {
+                    rmvms.add(rv);
+
+                }
+                //System.out.println(rmvms);
+                tf.calcLoadServer(von.getValue(), rmvms);
+                tf.energyServer();
+                von.getValue().clear();
             }
 
-            ArrayList<Integer> rmvms = new ArrayList<Integer>();
-            ServerModel model = trafficServer();
-            TrafficHeuristc tf = new TrafficHeuristc((int) model.getVmachines(), slots.size());
-            for (int rv : model.getRamVM()) {
-                rmvms.add(rv);
-            }
-
-            tf.calcLoadServer(slots, rmvms);
-            tf.energyServer();
-            slots.clear();
         });
 
 
@@ -296,8 +317,11 @@ public class App extends AppController {
                             }
                             //System.out.println("Terminado "+ TrafficRandomHeuristc.alt11);
                             System.out.println("");
+                            //footer.addLog("${_}", "\"*********** Process completed ***********");
                             cancel();
 
+
+                            //footer.addLog("${_}", "*********** Process completed ***********");
                             System.out.println("*********** Process completed ***********");
 
 
@@ -428,6 +452,21 @@ public class App extends AppController {
      -                                  Events                              -
      ----------------------------------------------------------------------*/
 
+    protected ServerModel trafficServer(String nameServer) {
+        ServerModel model = null;
+        for (Node device : workStation.getChildren()) {
+            if (device instanceof ServerDevice) {
+                model = (ServerModel) ((ServerDevice) device).getModel();
+                if (model.getName().equals(nameServer)) {
+                    break;
+                }
+
+            }
+        }
+
+        return model;
+    }
+
     protected ServerModel trafficServer() {
         ServerModel model = null;
         for (Node device : workStation.getChildren()) {
@@ -438,6 +477,27 @@ public class App extends AppController {
         }
 
         return model;
+    }
+
+    protected String getnameServer(String nameSensor) {
+        String name = "";
+        for (Node device : workStation.getChildren()) {
+            if (device instanceof CableDevice) {
+                CableModel model = (CableModel) ((CableDevice) device).getModel();
+                if ((model.getDev1Name().equals(nameSensor))) {
+                    name = model.getDev2Name();
+                    break;
+                }
+
+                if ((model.getDev2Name().equals(nameSensor))) {
+                    name = model.getDev1Name();
+                    break;
+                }
+
+            }
+        }
+
+        return name;
     }
 
     protected int trafficSensor() {
@@ -730,7 +790,7 @@ public class App extends AppController {
             Device deviceTraf = devInstance(valDevice);
             int countA = Collections.frequency(mList, deviceTraf);
             if (countA != 0) {
-                DeviceTraffic trfInstance = new DeviceTraffic(trafficField.getText());
+                DeviceTraffic trfInstance = new DeviceTraffic(trafficField.getText(), cbx.getValue());
                 slotsTrf.put(cbx.getValue(), trfInstance);
 
                 connects.forEach((itDev) -> {
@@ -978,10 +1038,12 @@ public class App extends AppController {
 
     protected EventHandler<MouseEvent> onCameraHomeBtnClicked() {
         return event -> {
+            String addedFormat = "${Ib_} ${}";
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 1);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_CCTV.src));
             workStation.getChildren().add(device);
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
         };
     }
@@ -992,6 +1054,8 @@ public class App extends AppController {
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 2);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_PURIFIER.src));
             workStation.getChildren().add(device);
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
         };
     }
@@ -1001,6 +1065,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 3);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_MOTION.src));
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
             workStation.getChildren().add(device);
         };
@@ -1012,6 +1078,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 4);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_LIGHT_SENSOR.src));
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
             workStation.getChildren().add(device);
         };
@@ -1023,6 +1091,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 5);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_FINGERPRINT.src));
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
             workStation.getChildren().add(device);
         };
@@ -1033,6 +1103,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 6);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_CARDIOGRAM.src));
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
             workStation.getChildren().add(device);
         };
@@ -1043,6 +1115,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 7);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_OXIMETER.src));
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
             workStation.getChildren().add(device);
         };
@@ -1054,6 +1128,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 8);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_GLUCOMETER.src));
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
             workStation.getChildren().add(device);
         };
@@ -1064,6 +1140,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 9);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_TEMPERATURE.src));
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
             workStation.getChildren().add(device);
         };
@@ -1074,6 +1152,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 10);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_SMARTWATCH.src));
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
             workStation.getChildren().add(device);
         };
@@ -1084,6 +1164,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 11);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_lIGHT_METER.src));
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
             workStation.getChildren().add(device);
         };
@@ -1094,6 +1176,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 12);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_DIVERLESS.src));
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
             workStation.getChildren().add(device);
         };
@@ -1104,6 +1188,8 @@ public class App extends AppController {
             byte number = workStation.getNumberOfSensors();
             SensorModel sensorModel = new SensorModel("SN" + number, "Sensor" + number, 13);
             Device device = new SensorDevice(sensorModel, new ImageView(Icon.SN_CHARGIN_STATION.src));
+            String addedFormat = "${Ib_} ${}";
+            footer.addLog(addedFormat, "Added =>", "Sensor" + number);
             CableDeviceController.workStation = workStation;
             workStation.getChildren().add(device);
         };

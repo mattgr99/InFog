@@ -1,5 +1,7 @@
 package com.perdiz.neblina.heuristics;
 
+import com.perdiz.neblina.app.component.App;
+
 import java.util.*;
 
 

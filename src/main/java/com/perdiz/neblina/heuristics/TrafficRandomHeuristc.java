@@ -1,19 +1,22 @@
 package com.perdiz.neblina.heuristics;
 
-import com.perdiz.neblina.app.component.App;
+
 
 import java.util.*;
 
 
 public class TrafficRandomHeuristc extends Thread{
-    public static Hashtable<Integer, ArrayList> vmTurnOn;
-    public static ArrayList<Integer> ramVM = new ArrayList<Integer>();
-    public static ArrayList<Integer> copyRam = new ArrayList<Integer>();
+   // public static Hashtable<Integer, ArrayList> vmTurnOn;
+    public  ArrayList<Integer> ramVM = new ArrayList<Integer>();
+    public static Hashtable<String, ArrayList<Integer>>  ramVMServer = new Hashtable<>();
+    public  ArrayList<Integer> copyRam = new ArrayList<Integer>();
+    public static Hashtable<String,ArrayList<Integer> >  copyRamServer = new Hashtable<>();
     public static ArrayList<Integer> resetRam = new ArrayList<Integer>();
-    public static ArrayList<Double> energyServer = new ArrayList<Double>();
-    public static ArrayList<Integer> slots = new ArrayList<Integer>();
-    public static ArrayList<Integer> vms_on = new ArrayList<Integer>();
-    public static Hashtable<Integer, ArrayList> trfList = new Hashtable<Integer, ArrayList>();
+    public static Hashtable<String,ArrayList<Double> > energyServer = new Hashtable<String,ArrayList<Double>>() ;
+    public static Hashtable<String,ArrayList<Integer> > slots = new Hashtable<String,ArrayList<Integer> >();
+    public static Hashtable<String,ArrayList<Integer> > vms_on = new Hashtable<String,ArrayList<Integer> >();
+    public Hashtable<Integer, ArrayList<Integer>> trfList = new Hashtable<Integer, ArrayList<Integer>>();
+    public static Hashtable<String, Hashtable<Integer, ArrayList<Integer>>> trfListServer = new Hashtable<>();
     public static Hashtable<Integer, ArrayList> trfListReset = new Hashtable<Integer, ArrayList>();
     public static int alt11;  //test
     private int timeTr;
@@ -22,6 +25,8 @@ public class TrafficRandomHeuristc extends Thread{
     private boolean fnPr;
     private static boolean restoreTr;
     private String nameSen;
+    private String nameFogServer;
+    //private static String nameFog;
 
     private static int Delta;  // slot duration (s)
     private static int Ns;     //Number of physical server
@@ -47,8 +52,10 @@ public class TrafficRandomHeuristc extends Thread{
 
 
 
-    public TrafficRandomHeuristc(int vms, ArrayList<Integer> ramVM1, int sec, String name, Hashtable<Integer, ArrayList> trf, int interval1, int interval2){
-        vmTurnOn = new Hashtable<>();
+    public TrafficRandomHeuristc(int vms, ArrayList<Integer> ramVM1, int sec, String name, Hashtable<Integer, ArrayList> trf, int interval1, int interval2, String nameFg){
+        this.nameFogServer = nameFg;
+        //nameFog = nameFg;
+        //vmTurnOn = new Hashtable<>();
         Delta = 1;
         Ns = 1;
         M_max = vms;
@@ -77,8 +84,11 @@ public class TrafficRandomHeuristc extends Thread{
         this.timeTr = sec;
         //ramVM = ramVM1;
         ramVM = (ArrayList<Integer>)ramVM1.clone();
+        ramVMServer.put(nameFg,ramVM);
+        //trfListServer.put(nameFg,ramVM);
 
-        trfList = (Hashtable<Integer, ArrayList>) trf.clone();
+        trfList = (Hashtable<Integer, ArrayList<Integer>>) trf.clone();
+        trfListServer.put(nameFg,trfList);
         /*for (int k=0; k<ramVM1.size(); k++){
             ramVM.add(ramVM1.get(k));
         }*/
@@ -88,8 +98,9 @@ public class TrafficRandomHeuristc extends Thread{
         this.intervalRandom2 = interval2;
         restoreTr = false;
         //resetRam = (ArrayList<Integer>)ramVM1.clone();
-        for (int k=0; k<ramVM.size(); k++){
+        for (int k=0; k<ramVMServer.get(nameFogServer).size(); k++){
             copyRam.add(ramVM.get(k));
+            copyRamServer.put(nameFogServer,copyRam);
             //resetRam.add(ramVM.get(k));
 
             /* Estado Vms
@@ -121,37 +132,52 @@ public class TrafficRandomHeuristc extends Thread{
 
     }
 
-    public static void resetServer(ArrayList<Integer> ramVM1){
-        vmTurnOn = trfList;
+    public static void resetServer(Hashtable<String, ArrayList<Integer>> ramVM1){
+
+        //vmTurnOn = trfList;
         energyServer();
+        //System.out.println(ramVM1);
+
         //clstrfList = trfListReset;
+
         restoreTr = true;
-        ramVM = (ArrayList<Integer>)ramVM1.clone();
-        //trfList = (Hashtable<Integer, ArrayList>) trf.clone();
-        //ramVM = resetRam;
+        //ramVM = (ArrayList<Integer>)ramVM1.clone();
+        //ramVMServer.clear();
 
-        //ramVM.clear();
-
-        Enumeration<Integer> ekey = trfList.keys();
-        //System.out.println(trfList);
-        //System.out.println(trfAccept);
-
-        while(ekey.hasMoreElements()){
-            trfList.remove(ekey.nextElement());
+//        ramVMServer = (Hashtable<String, ArrayList<Integer>>)ramVM1.clone();
+        //System.out.println(ramVMServer);
+        for (Map.Entry<String, ArrayList<Integer>> ramS : ramVM1.entrySet()) {
+            ArrayList<Integer> nRams = new ArrayList<>();
+            nRams = (ArrayList<Integer>) ramS.getValue().clone();
+            ramVMServer.put(ramS.getKey(),nRams);
         }
 
-        for (int k=0; k<ramVM.size(); k++){
-          //  ramVM.add(copyRam.get(k));
 
-            /* State Vms
-             0 -> turn off
-             1 -> turn on
-            */
-            ArrayList<Integer> balance = new ArrayList<>();
 
-            balance.add(0);
-            trfList.put(k,balance);
-        }
+            //trfList = (Hashtable<Integer, ArrayList>) trf.clone();
+            //ramVM = resetRam;
+
+            //ramVM.clear();
+
+            //Enumeration<Integer> ekey = trfListServer.get(nameFog).keys();
+            //System.out.println(trfList);
+            //System.out.println(trfAccept);
+            for (Map.Entry<String, Hashtable<Integer, ArrayList<Integer>>> von : trfListServer.entrySet()) {
+                Hashtable<Integer, ArrayList<Integer>> valRam = von.getValue();
+
+                for (Map.Entry<Integer, ArrayList<Integer>> von1 : valRam.entrySet()) {
+                    ArrayList<Integer> balance = new ArrayList<>();
+                    balance.add(0);
+                    valRam.put(von1.getKey(),balance);
+                }
+                trfListServer.put(von.getKey(), valRam);
+
+            }
+
+//        System.out.println(ramVMServer);
+//        System.out.println(trfListServer);
+
+
     }
 
 
@@ -174,10 +200,11 @@ public class TrafficRandomHeuristc extends Thread{
         Enumeration<Integer> ekeys = trfAccept.keys();
 
         System.out.println("--------------Load Server------------------");
+        System.out.println("Server: "   + this.nameFogServer);
         System.out.println("--------------Sensor: "+ this.nameSen+" (" + this.timeTr +  "s) ------------------");
 
            // time_start = System.currentTimeMillis();
-            System.out.println("Server 1 ");
+
             System.out.println("Traffic "+ cin1);
             if(cin1 > (Ns * M_max * f_max * (Delta - T_on_server - T_on_vm))){
                 System.out.println("Consolidation unfeasible at slot " + cin1);
@@ -188,26 +215,29 @@ public class TrafficRandomHeuristc extends Thread{
 
             //System.out.println(np.getMessage());
            if(!unf){
-                for (int j=0; j<ramVM.size(); j++){
-                    if(cin1 <= ramVM.get(j)){
+                for (int j=0; j<ramVMServer.get(nameFogServer).size(); j++){
+                    if(cin1 <= ramVMServer.get(nameFogServer).get(j)){
 
                         if(!firstTrf){
-                            ArrayList<Integer> serverOn = trfList.get(j);
+                            ArrayList<Integer> serverOn = trfListServer.get(nameFogServer).get(j);
                             if(serverOn.get(0)==1){
-                                int total = ramVM.get(j) - cin1;
+                                int total = ramVMServer.get(nameFogServer).get(j) - cin1;
                                 trfAccept.put(j, total);
                             }
 
                         }else {
-                            int total = ramVM.get(j) - cin1;
+                            int total = ramVMServer.get(nameFogServer).get(j) - cin1;
                             trfAccept.put(j, total);
                         }
 
                     }
                 }
 
-                for (int j=0; j<ramVM.size(); j++){
-                    ArrayList<Integer> serverOn1 = trfList.get(j);
+                for (int j=0; j<ramVMServer.get(nameFogServer).size(); j++){
+                    ArrayList<Integer> serverOn1 = trfListServer.get(nameFogServer).get(j);
+                    /*vfmkk mkcdkmkcd mkcd*/
+//                    System.out.println(trfListServer);
+//                    System.out.println(ramVMServer);
                     if(serverOn1.get(0)==1){
                         vmOn++;
                     }
@@ -225,43 +255,47 @@ public class TrafficRandomHeuristc extends Thread{
                     if(vmOn>1){
 
                         //------------------------------------------------------------------------
-                        for (int vm1=0; vm1<ramVM.size(); vm1++){
-                            ArrayList<Integer> serverOn = trfList.get(vm1);
-                            if((serverOn.get(0)!=1) || (ramVM.get(vm1)==0)){
+                        for (int vm1=0; vm1<ramVMServer.get(nameFogServer).size(); vm1++){
+                            ArrayList<Integer> serverOn = trfListServer.get(nameFogServer).get(vm1);
+                            if((serverOn.get(0)!=1) || (ramVMServer.get(nameFogServer).get(vm1)==0)){
                                 continue;
                             }
-                            ArrayList<Integer> balanceImp = trfList.get(vm1);
+                            ArrayList<Integer> balanceImp = trfListServer.get(nameFogServer).get(vm1);
                             int ramPos = balanceImp.size()-1;
-                            int slot1 = balanceImp.get(ramPos) + ramVM.get(vm1);
+                            int slot1 = balanceImp.get(ramPos) + ramVMServer.get(nameFogServer).get(vm1);
                             if(cin1 <= slot1){
-                                for (int vm2=0; vm2<ramVM.size(); vm2++){
-                                    ArrayList<Integer> serverTOn = trfList.get(vm2);
-                                    if((serverTOn.get(0)!=1) || (ramVM.get(vm2)==0)){
+                                for (int vm2=0; vm2<ramVMServer.get(nameFogServer).size(); vm2++){
+                                    ArrayList<Integer> serverTOn = trfListServer.get(nameFogServer).get(vm2);
+                                    if((serverTOn.get(0)!=1) || (ramVMServer.get(nameFogServer).get(vm2)==0)){
                                         continue;
                                     }
                                     if (vm2==vm1)
                                         continue;
-                                    if (balanceImp.get(ramPos) <= ramVM.get(vm2)){
+                                    if (balanceImp.get(ramPos) <= ramVMServer.get(nameFogServer).get(vm2)){
 
                                         int trfTransfer = balanceImp.get(ramPos);
-                                        ramVM.set(vm2,ramVM.get(vm2) - balanceImp.get(ramPos));
-                                        ramVM.set(vm1,slot1 - cin1);
-                                        ArrayList<Integer> balanceAdd = trfList.get(vm2);
+                                        ramVMServer.get(nameFogServer).set(vm2,ramVMServer.get(nameFogServer).get(vm2) - balanceImp.get(ramPos));
+                                        ramVMServer.get(nameFogServer).set(vm1,slot1 - cin1);
+                                        ArrayList<Integer> balanceAdd = trfListServer.get(nameFogServer).get(vm2);
                                         balanceAdd.add(balanceImp.get(ramPos));
+                                        trfList = trfListServer.get(nameFogServer);
                                         trfList.put(vm2,balanceAdd);
+                                        trfListServer.put(nameFogServer,trfList);
 
                                         balanceImp.remove(balanceImp.get(ramPos));
                                         balanceImp.add(cin1);
+                                        trfList = trfListServer.get(nameFogServer);
                                         trfList.put(vm1,balanceImp);
+                                        trfListServer.put(nameFogServer,trfList);
 
-                                        System.out.println("-------Transfer traffic " + trfTransfer + " (VM " + (vm1+1) + " RAM " + copyRam.get(vm1) + " Mb) " + "to VM " + (vm2+1) + " RAM " + copyRam.get(vm2)+ " Mb-------");
-                                        System.out.println("In Use: " + (copyRam.get(vm2) - ramVM.get(vm2)) + "Mb ");
-                                        System.out.println("Available: " + ramVM.get(vm2) + "Mb ");
+                                        System.out.println("-------Transfer traffic " + trfTransfer + " (VM " + (vm1+1) + " RAM " + copyRamServer.get(nameFogServer).get(vm1) + " Mb) " + "to VM " + (vm2+1) + " RAM " + copyRamServer.get(nameFogServer).get(vm2)+ " Mb-------");
+                                        System.out.println("In Use: " + (copyRamServer.get(nameFogServer).get(vm2) - ramVMServer.get(nameFogServer).get(vm2)) + "Mb ");
+                                        System.out.println("Available: " + ramVMServer.get(nameFogServer).get(vm2) + "Mb ");
                                         System.out.println("----------------------------------------------------------------");
 
-                                        System.out.println("-------Process in VM " + (vm1+1) + " Total RAM Memory: " + copyRam.get(vm1) + " Mb-------");
-                                        System.out.println("In Use: " + (copyRam.get(vm1) - ramVM.get(vm1)) + "Mb ");
-                                        System.out.println("Available: " + ramVM.get(vm1) + "Mb ");
+                                        System.out.println("-------Process in VM " + (vm1+1) + " Total RAM Memory: " + copyRamServer.get(nameFogServer).get(vm1) + " Mb-------");
+                                        System.out.println("In Use: " + (copyRamServer.get(nameFogServer).get(vm1) - ramVMServer.get(nameFogServer).get(vm1)) + "Mb ");
+                                        System.out.println("Available: " + ramVMServer.get(nameFogServer).get(vm1) + "Mb ");
                                         flag = true;
                                         break;
 
@@ -285,9 +319,9 @@ public class TrafficRandomHeuristc extends Thread{
                     }
 
                     if (vmMig){
-                        for (int k=0; k<ramVM.size(); k++){
-                            if(cin1 <= ramVM.get(k)){
-                                int total = ramVM.get(k) - cin1;
+                        for (int k=0; k<ramVMServer.get(nameFogServer).size(); k++){
+                            if(cin1 <= ramVMServer.get(nameFogServer).get(k)){
+                                int total = ramVMServer.get(nameFogServer).get(k) - cin1;
                                 trfAccept.put(k, total);
                             }
                         }
@@ -312,14 +346,16 @@ public class TrafficRandomHeuristc extends Thread{
                     }
 
                     if (!trfAccept.isEmpty()){
-                        ArrayList<Integer> balanceTrf = trfList.get(pos);
+                        ArrayList<Integer> balanceTrf =  trfListServer.get(nameFogServer).get(pos);
                         balanceTrf.set(0,1);
                         balanceTrf.add(cin1);
+                        trfList = trfListServer.get(nameFogServer);
                         trfList.put(pos,balanceTrf);
-                        ramVM.set(pos,vmOptimum);
-                        System.out.println("-------Process in VM " + (pos+1) + " Total RAM Memory: " + copyRam.get(pos) + " Mb-------");
-                        System.out.println("In Use: " + (copyRam.get(pos) - ramVM.get(pos)) + "Mb ");
-                        System.out.println("Available: " + ramVM.get(pos) + "Mb ");
+                        trfListServer.put(nameFogServer,trfList);
+                        ramVMServer.get(nameFogServer).set(pos,vmOptimum);
+                        System.out.println("-------Process in VM " + (pos+1) + " Total RAM Memory: " + copyRamServer.get(nameFogServer).get(pos) + " Mb-------");
+                        System.out.println("In Use: " + (copyRamServer.get(nameFogServer).get(pos) - ramVMServer.get(nameFogServer).get(pos)) + "Mb ");
+                        System.out.println("Available: " + ramVMServer.get(nameFogServer).get(pos) + "Mb ");
                     }else{
                         System.out.println("The VMs don't support the traffic "+ cin1);
 
@@ -340,7 +376,7 @@ public class TrafficRandomHeuristc extends Thread{
             flag = false;
             firstTrf =false;
             ekey = trfAccept.keys();
-            System.out.println(trfList);
+            System.out.println(trfListServer.get(nameFogServer));
             //System.out.println(ramVM);
             //System.out.println(trfAccept);
 
@@ -382,35 +418,76 @@ public class TrafficRandomHeuristc extends Thread{
 
         //ArrayList<Double>
         int workload = 0;
-        for (Map.Entry<Integer, ArrayList> von : trfList.entrySet()){
+        for (Map.Entry<String, Hashtable<Integer, ArrayList<Integer>>> von1 : trfListServer.entrySet()) {
+            for (Map.Entry<Integer, ArrayList<Integer>> von : von1.getValue().entrySet()){
 
 
-            ArrayList<Integer> serverOn = von.getValue();
-            if(serverOn.get(0)==1){
-                m++;
-                for(int i = 1; i< serverOn.size(); i++){
-                    workload = workload + serverOn.get(i);
+                ArrayList<Integer> serverOn = von.getValue();
+                if(serverOn.get(0)==1){
+                    m++;
+                    for(int i = 1; i< serverOn.size(); i++){
+                        workload = workload + serverOn.get(i);
+                    }
+
                 }
+            }
+
+            /*****************************************************///////////////////////
+            //vms_on.add(m);
+            if (vms_on.get(von1.getKey()) == null) {
+                ArrayList<Integer> vm_on = new ArrayList<>();
+                vm_on.add(m);
+                vms_on.put(von1.getKey(),vm_on);
+
+            }else{
+                ArrayList<Integer> vm_on = new ArrayList<>();
+                vm_on = vms_on.get(von1.getKey());
+                vm_on.add(m);
+                vms_on.put(von1.getKey(),vm_on);
 
             }
-        }
-        vms_on.add(m);
-        slots.add(workload);
-        //System.out.println(m);
-       // System.out.println(workload);
-        f_zero = workload/(m * (Delta - T_on_server - T_on_vm));
-        E_idle = 25;
-        outputEnergy_server = (2/(1 + Math.exp(-(SS)/delta_shaping_factor)) - 1) * ((E_idle + SS *(( E_max - E_idle)/M_max)*
-                (Math.pow(f_zero/f_max,v)) + k_e * SS * (Math.pow(f_zero - y,2))));
+            //slots.add(workload);
+            if (slots.get(von1.getKey()) == null) {
+                ArrayList<Integer> slot = new ArrayList<>();
+                slot.add(workload);
+                slots.put(von1.getKey(),slot);
 
-        System.out.println("--------------------------------------------------------");
-        System.out.println("Energy Server                                          |");
-        System.out.println("                                                       |");
-        System.out.println(outputEnergy_server+ "                                      |");
-        System.out.println("--------------------------------------------------------");
-        m = 0;
-        energyServer.add(outputEnergy_server);
-        outputEnergy_server = 0.0;
+            }else{
+                ArrayList<Integer> slot = new ArrayList<>();
+                slot = slots.get(von1.getKey());
+                slot.add(workload);
+                slots.put(von1.getKey(),slot);
+
+            }
+            //System.out.println(m);
+            // System.out.println(workload);
+            f_zero = workload/(m * (Delta - T_on_server - T_on_vm));
+            E_idle = 25;
+            outputEnergy_server = (2/(1 + Math.exp(-(SS)/delta_shaping_factor)) - 1) * ((E_idle + SS *(( E_max - E_idle)/M_max)*
+                    (Math.pow(f_zero/f_max,v)) + k_e * SS * (Math.pow(f_zero - y,2))));
+
+            System.out.println("--------------------------------------------------------");
+            System.out.println("Energy Server " + von1.getKey()+"                                   |");
+            System.out.println("                                                       |");
+            System.out.println(outputEnergy_server+ "                                      |");
+            System.out.println("--------------------------------------------------------");
+            m = 0;
+            /***************************************************/
+            //  energyServer.add(outputEnergy_server);
+            if (energyServer.get(von1.getKey()) == null) {
+                ArrayList<Double> energy1 = new ArrayList<>();
+                energy1.add(outputEnergy_server);
+                energyServer.put(von1.getKey(),energy1);
+
+            }else{
+                ArrayList<Double> energy1 = new ArrayList<>();
+                energy1 = energyServer.get(von1.getKey());
+                energy1.add(outputEnergy_server);
+                energyServer.put(von1.getKey(),energy1);
+            }
+            outputEnergy_server = 0.0;
+
+        }
 
 
     }

@@ -95,7 +95,7 @@ public class TrafficHeuristc {
         for (int i=0; i<this.CIN; i++){
 
             time_start = System.currentTimeMillis();
-            System.out.println("Server: " + this.nameFogServer);
+            System.out.println("Server: "   + this.nameFogServer);
             footer.addLog("${_}", "Server: " + this.nameFogServer);
             System.out.println("Traffic "+ cin1.get(i));
             footer.addLog("${_}", "Traffic "+ cin1.get(i));

@@ -71,6 +71,7 @@ public class App extends AppController {
     ArrayList<Integer> slots = new ArrayList<Integer>();
     public static Hashtable<String, DeviceTraffic> slotsTrf = new Hashtable<String, DeviceTraffic>();
     public static Hashtable<String, ArrayList<Integer>> serverTrf = new Hashtable<String, ArrayList<Integer>>();
+    public static Hashtable<String, ArrayList<DeviceTrafficRandom>> serverTrfRandom = new Hashtable<String, ArrayList<DeviceTrafficRandom>>();
     public static Hashtable<String, DeviceTrafficRandom> trfDevice = new Hashtable<String, DeviceTrafficRandom>();
 
     //CableDevice cb = new CableDevice();
@@ -168,7 +169,7 @@ public class App extends AppController {
 
         this.toolBar.setOnPlayActionEvent((t) -> {
             //Work time server
-            ArrayList<Integer> listr = new ArrayList<>();
+           // ArrayList<Integer> listr = new ArrayList<>();
             for (Map.Entry<String, DeviceTraffic> von : slotsTrf.entrySet()) {
 
                 DeviceTraffic trafficDev = von.getValue();
@@ -186,18 +187,7 @@ public class App extends AppController {
                     //System.out.println(serverTrf);
                 }
 
-
-                //listr.add(Integer.parseInt(trafficDev.getValTraffic()));
-                //pos = von.getKey();
-
             }
-
-           /* int sizelist = listr.size() - 1;
-
-            for (int i = 0; i < listr.size(); i++) {
-                slots.add(listr.get(sizelist));
-                sizelist--;
-            }*/
 
             for (Map.Entry<String, ArrayList<Integer>> von : serverTrf.entrySet()) {
                 ArrayList<Integer> rmvms = new ArrayList<Integer>();
@@ -223,54 +213,79 @@ public class App extends AppController {
             launchFormRandomPlay();
 
             if (isSetTime) {
-                TrafficRandomHeuristc.vms_on.clear();
-                TrafficRandomHeuristc.slots.clear();
-                TrafficRandomHeuristc.energyServer.clear();
+
+                for (Map.Entry<String, ArrayList<Integer>> von : TrafficRandomHeuristc.vms_on.entrySet()) {
+                    von.getValue().clear();
+                }
+                for (Map.Entry<String, ArrayList<Integer>> von : TrafficRandomHeuristc.slots.entrySet()) {
+                    von.getValue().clear();
+                }
+                for (Map.Entry<String, ArrayList<Double>> von : TrafficRandomHeuristc.energyServer.entrySet()) {
+                    von.getValue().clear();
+                }
+
+                for (Map.Entry<String, ArrayList<DeviceTrafficRandom>> von : serverTrfRandom.entrySet()) {
+                    von.getValue().clear();
+                }
                 this.isSetTime = false;
                 int stopTime = this.timeTraffic;
                 Timer timer = new Timer();
-                ServerModel model = trafficServer();
-                ArrayList<Integer> rmvms = new ArrayList<Integer>();
-                //ArrayList<Integer> timtr = new ArrayList<Integer>();
-                ArrayList<String> nameSensors = new ArrayList<String>();
+
+                Hashtable<String,ArrayList<Integer>> serversList = new Hashtable<>();
                 ArrayList<TrafficRandomHeuristc> trsend = new ArrayList<TrafficRandomHeuristc>();
-                Hashtable<Integer, ArrayList> finalDisTrf = new Hashtable<>();
-                int nsen = trafficSensor();
-                nameSensors = nameSensor();
+//                Hashtable<Integer, ArrayList> finalDisTrf = new Hashtable<>();
+                //int nsen = trafficSensor();
+                //nameSensors = nameSensor();
 
-                /*for(int rv1=0; rv1<nsen; rv1++){
-                    timtr.add((int)(Math.random()*(10-1+1)+1));
-                }*/
+                for (Map.Entry<String, DeviceTrafficRandom> von : trfDevice.entrySet()) {
+                    DeviceTrafficRandom trafficDev = von.getValue();
+                    trafficDev.setNameSensor(von.getKey());
+                    trfDevice.put(von.getKey(), trafficDev);
+                    String nameS = getnameServer(von.getKey());
+                    //System.out.println(nameS +" +");
+                    if (serverTrfRandom.get(nameS)  != null) {
+                        ArrayList<DeviceTrafficRandom> listrServer = serverTrfRandom.get(nameS);
 
-                for (int rv : model.getRamVM()) {
-                    rmvms.add(rv);
-                }
-
-                for (int tf1 = 0; tf1 < rmvms.size(); tf1++) {
-                    ArrayList<Integer> baltr = new ArrayList<>();
-                    baltr.add(0);
-                    finalDisTrf.put(tf1, baltr);
-                }
-
-
-                for (int exe = 0; exe < nsen; exe++) {
-                    if (this.trfDevice.get(nameSensors.get(exe)) == null) {
-                        continue;
+                        listrServer.add(von.getValue());
+                        serverTrfRandom.put(nameS,listrServer);
+                        //System.out.println(serverTrf);
+                    }else{
+                        ArrayList<DeviceTrafficRandom> listrServer = new ArrayList<>();
+                        listrServer.add(von.getValue());
+                        serverTrfRandom.put(nameS,listrServer);
+                        //System.out.println(serverTrf);
                     }
-                    DeviceTrafficRandom dvt = this.trfDevice.get(nameSensors.get(exe));
-                    TrafficRandomHeuristc ner1 = new TrafficRandomHeuristc((int) model.getVmachines(), rmvms, dvt.getTime(), nameSensors.get(exe), finalDisTrf, dvt.getFirstInterval(), dvt.getSecondInterval());
-                    trsend.add(ner1);
                 }
 
-                /*Enumeration<String> ekey = this.trfDevice.keys();
-                ekey = this.trfDevice.keys();
-                while(ekey.hasMoreElements()){
-                    this.trfDevice.remove(ekey.nextElement());
-                }*/
+                for (Map.Entry<String, ArrayList<DeviceTrafficRandom>> von : serverTrfRandom.entrySet()) {
 
-                ArrayList<String> finalNameSensors = nameSensors;
+                    ArrayList<Integer> rmvms = new ArrayList<Integer>();
+                    Hashtable<Integer, ArrayList> finalDisTrf = new Hashtable<>();
+                    ArrayList<DeviceTrafficRandom> arrayTraffic = new ArrayList<>();
+                    arrayTraffic = von.getValue();
 
-                //Hashtable<Integer, ArrayList> finalDisTrf1 = finalDisTrf;
+                    ServerModel model = trafficServer(von.getKey());
+
+                    for (int rv : model.getRamVM()) {
+                        rmvms.add(rv);
+
+                    }
+
+                    serversList.put(von.getKey(), rmvms);
+//                    System.out.println("444444444444444444444444444444444444444444444");
+//                    System.out.println(serversList);
+                    for (int tf1 = 0; tf1 < rmvms.size(); tf1++) {
+                        ArrayList<Integer> baltr = new ArrayList<>();
+                        baltr.add(0);
+                        finalDisTrf.put(tf1, baltr);
+                    }
+                    for (DeviceTrafficRandom dvt: arrayTraffic) {
+                        TrafficRandomHeuristc ner1 = new TrafficRandomHeuristc((int) model.getVmachines(), rmvms, dvt.getTime(), dvt.getNameSensor(), finalDisTrf, dvt.getFirstInterval(), dvt.getSecondInterval(), model.getName());
+                        trsend.add(ner1);
+                    }
+                   }
+
+
                 TimerTask tarea = new TimerTask() {
                     private int count = 0;
                     boolean startP = true;
@@ -292,12 +307,9 @@ public class App extends AppController {
                                     //sensor.setFnPr(true);
                                     sensor.suspend();
                                 }
-                                TrafficRandomHeuristc.resetServer(rmvms);
-                                //trsend.clear();
-                            /*for(int exe=0; exe<nsen; exe++){
-                                TrafficRandomHeuristc ner1 = new TrafficRandomHeuristc((int)model.getVmachines(), rmvms, timtr.get(exe), finalNameSensors.get(exe));
-                                trsend.add(ner1);
-                            }*/
+
+                                TrafficRandomHeuristc.resetServer(serversList);
+
 
                                 for (TrafficRandomHeuristc sensor : trsend) {
                                     sensor.resume();
@@ -400,41 +412,18 @@ public class App extends AppController {
         });
 
         this.leftSideBar.setChartBarBtnEvent((t) -> {
-
-            BarChartTraffic chartTraffic = new BarChartTraffic(TrafficRandomHeuristc.energyServer);
-            try {
-                chartTraffic.start(new Stage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // TrafficRandomHeuristc.energyServer.clear();
+            launchChart(0);
 
         });
 
         this.leftSideBar.setChartLineVmBtnEvent((t) -> {
-
-            LineChartTraffic lineTraffic = new LineChartTraffic(TrafficRandomHeuristc.vms_on, "Time(sec)", "# VM - ON", "Virtual Machines turned on", "VM", true);
-            try {
-                lineTraffic.start(new Stage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // TrafficRandomHeuristc.vms_on.clear();
+            launchChart(1);
 
         });
 
         this.leftSideBar.setChartLineTrBtnEvent((t) -> {
+            launchChart(2);
 
-            LineChartTraffic lineTraffic = new LineChartTraffic(TrafficRandomHeuristc.slots, "Slot Time (sec)", "# OF ARRIVAL PER SLOT", "Trace of I/O arrival data", "Slot", false);
-            try {
-                lineTraffic.start(new Stage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            //TrafficRandomHeuristc.slots.clear();
         });
 
         workStation.setOnMouseClicked((t) -> {
@@ -467,16 +456,107 @@ public class App extends AppController {
         return model;
     }
 
-    protected ServerModel trafficServer() {
+    protected void launchChart(int type_chart) {
+
+        ObservableList<String> items = FXCollections.observableArrayList();
+        trafficServer(items);
+        //addTraffic(items);
+        //items.stream().distinct();
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(10);
+        gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+
+        //Arranging all the nodes in the grid
+        gridPane.add(new Text("Select Server        "), 0, 0);
+        gridPane.add(cbx = new ComboBox<>(items), 1, 0);
+
+
+        Button okBtn = new Button("ok");
+        okBtn.getStyleClass().add("okbtn");
+        okBtn.setOnMouseClicked(this.onOkBtnChartTrafficClicked(type_chart));
+
+        Button cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("cancelbtn");
+        cancelBtn.setOnMouseClicked(this.onCancelChartBtnClicked());
+
+        HBox btnContainer = new HBox(cancelBtn, okBtn);
+        btnContainer.setSpacing(10);
+        btnContainer.setAlignment(Pos.CENTER_RIGHT);
+        gridPane.add(btnContainer, 1, 3);
+        this.formScene = new Scene(gridPane);
+
+        final Stage primaryStage = (Stage) this.getScene().getWindow();
+        formStage = new Stage();
+        // formStage.setOnCloseRequest(beforeCloseFormStage());
+        formScene.getStylesheets().addAll("file:src/main/resources/style/FormStyle.css");
+        formStage.setScene(formScene);
+        formStage.initModality(Modality.WINDOW_MODAL);
+        formStage.initOwner(primaryStage);
+        formStage.setResizable(false);
+        formStage.setTitle("Traffic Bar Chart ");
+        formStage.showAndWait();
+        formStage.close();
+        items.clear();
+
+
+    }
+
+    protected EventHandler onOkBtnChartTrafficClicked(int type_chart) {
+        return event -> {
+            if (type_chart==0) {
+                ArrayList<Double> energy = new ArrayList<>();
+                energy = TrafficRandomHeuristc.energyServer.get(cbx.getValue());
+                BarChartTraffic chartTraffic = new BarChartTraffic(energy);
+                try {
+                    chartTraffic.start(new Stage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else if (type_chart == 1) {
+                ArrayList<Integer> vms = new ArrayList<>();
+                vms = TrafficRandomHeuristc.vms_on.get(cbx.getValue());
+                LineChartTraffic lineTraffic = new LineChartTraffic(vms, "Time(sec)", "# VM - ON", "Virtual Machines turned on", "VM", true);
+                try {
+                    lineTraffic.start(new Stage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }else if (type_chart == 2) {
+                ArrayList<Integer> slot = new ArrayList<>();
+                slot = TrafficRandomHeuristc.slots.get(cbx.getValue());
+                LineChartTraffic lineTraffic = new LineChartTraffic(slot, "Slot Time (sec)", "# OF ARRIVAL PER SLOT", "Trace of I/O arrival data", "Slot", false);
+                try {
+                    lineTraffic.start(new Stage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+           // this.formStage.close();
+        };
+    }
+
+    protected EventHandler<MouseEvent> onCancelChartBtnClicked() {
+        return event -> {
+            //this.cbx.setValue(this.cable.getDestinyId());
+            this.formStage.close();
+        };
+    }
+
+    protected void trafficServer(ObservableList<String> items) {
         ServerModel model = null;
         for (Node device : workStation.getChildren()) {
             if (device instanceof ServerDevice) {
                 model = (ServerModel) ((ServerDevice) device).getModel();
-                break;
+                items.add(model.getName());
             }
         }
 
-        return model;
+
     }
 
     protected String getnameServer(String nameSensor) {

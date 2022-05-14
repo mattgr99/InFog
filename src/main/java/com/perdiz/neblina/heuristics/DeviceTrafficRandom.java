@@ -4,6 +4,7 @@ public class DeviceTrafficRandom {
     private int time;
     private int firstInterval;
     private int secondInterval;
+    private String nameSensor;
 
     public DeviceTrafficRandom(int traffic1, int traffic2, int timeDev){
         this.time = timeDev;
@@ -33,5 +34,13 @@ public class DeviceTrafficRandom {
 
     public void setSecondInterval(int secondInterval) {
         this.secondInterval = secondInterval;
+    }
+
+    public String getNameSensor() {
+        return nameSensor;
+    }
+
+    public void setNameSensor(String nameSensor) {
+        this.nameSensor = nameSensor;
     }
 }

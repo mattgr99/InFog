@@ -412,8 +412,6 @@ public class ServerDeviceController extends Device {
                 gridPane.add(okBtn, 1, 3);
 
 
-
-
                 this.formScene1 = new Scene(gridPane);
 
                 final Stage primaryStage = (Stage) this.getScene().getWindow();
@@ -445,12 +443,7 @@ public class ServerDeviceController extends Device {
                 }
                 alert.showAndWait();
 
-
             }
-
-
-
-
         };
     }
 

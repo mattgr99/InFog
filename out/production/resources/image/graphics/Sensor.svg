@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Capa_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 50 50"
+   xml:space="preserve"
+   sodipodi:docname="Sensor.svg"
+   width="50"
+   height="50"
+   inkscape:version="0.92.4 5da689c313, 2019-01-14"><metadata
+   id="metadata65"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs63" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1366"
+   inkscape:window-height="740"
+   id="namedview61"
+   showgrid="false"
+   inkscape:zoom="10.097423"
+   inkscape:cx="24.625138"
+   inkscape:cy="25.007515"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Capa_1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+<g
+   id="g81"
+   transform="matrix(0.09375,0,0,0.09375,1,1)"><path
+     id="path2"
+     d="M 256,0 C 131.8,0 31,101.8 31,226 V 361 H 481 V 226 C 481,101.8 380.2,0 256,0 Z"
+     style="fill:#ede9e8"
+     inkscape:connector-curvature="0" /><path
+     id="path4"
+     d="M 481,226 V 361 H 256 V 0 c 124.2,0 225,101.8 225,226 z"
+     style="fill:#dfd7d5"
+     inkscape:connector-curvature="0" /><path
+     id="path6"
+     d="M 421,361 H 301 V 65.556 l 21.035,9.229 C 382.152,101.181 421,160.536 421,226 Z"
+     style="fill:#444444"
+     inkscape:connector-curvature="0" /><polygon
+     id="polygon8"
+     points="211,121 275.501,121 331,157.899 331,361 211,361 "
+     style="fill:#929298" /><polygon
+     id="polygon10"
+     points="256,121 275.501,121 331,157.899 331,361 256,361 "
+     style="fill:#7c8388" /><path
+     id="path12"
+     d="m 136,361 c -24.901,0 -45,20.099 -45,45 0,5.099 0.901,10.199 2.999,15.899 L 136,512 178.599,421 c 1.5,-4.801 2.401,-9.901 2.401,-15 0,-24.901 -20.099,-45 -45,-45 z"
+     style="fill:#fed2a4"
+     inkscape:connector-curvature="0" /><path
+     id="path14"
+     d="m 181,406 c 0,5.099 -0.901,10.199 -2.401,15 L 136,512 V 361 c 24.901,0 45,20.099 45,45 z"
+     style="fill:#f6a96c"
+     inkscape:connector-curvature="0" /><path
+     id="path16"
+     d="m 376,361 c -24.901,0 -45,20.099 -45,45 0,5.099 0.901,10.199 2.999,15.899 L 376,512 418.599,421 c 1.5,-4.801 2.401,-9.901 2.401,-15 0,-24.901 -20.099,-45 -45,-45 z"
+     style="fill:#fed2a4"
+     inkscape:connector-curvature="0" /><path
+     id="path18"
+     d="m 421,406 c 0,5.099 -0.901,10.199 -2.401,15 L 376,512 V 361 c 24.901,0 45,20.099 45,45 z"
+     style="fill:#f6a96c"
+     inkscape:connector-curvature="0" /><path
+     id="path20"
+     d="m 181,181 v 180 h 90 V 181 Z"
+     style="fill:#ff9100"
+     inkscape:connector-curvature="0" /><rect
+     id="rect22"
+     height="180"
+     width="15"
+     style="fill:#ff7816"
+     y="181"
+     x="256" /><path
+     id="path24"
+     d="M 211,361 H 91 V 241 h 120 z"
+     style="fill:#25d9f8"
+     inkscape:connector-curvature="0" /><rect
+     id="rect26"
+     height="60"
+     width="512"
+     style="fill:#babac0"
+     y="331"
+     x="0" /><rect
+     id="rect28"
+     height="60"
+     width="256"
+     style="fill:#a1a1a7"
+     y="331"
+     x="256" /></g>
+<g
+   id="g30"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g32"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g34"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g36"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g38"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g40"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g42"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g44"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g46"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g48"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g50"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g52"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g54"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g56"
+   transform="translate(0,-462)">
+</g>
+<g
+   id="g58"
+   transform="translate(0,-462)">
+</g>
+</svg>

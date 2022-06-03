@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Capa_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 50 50"
+   xml:space="preserve"
+   sodipodi:docname="led2.svg"
+   width="50"
+   height="50"
+   inkscape:version="0.92.4 5da689c313, 2019-01-14"
+   inkscape:export-filename="/home/alexander/Projects/desktop/idcsimu/src/main/resources/image/png/Sensor.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"><metadata
+   id="metadata85"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs83" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1366"
+   inkscape:window-height="740"
+   id="namedview81"
+   showgrid="false"
+   inkscape:zoom="5.6464844"
+   inkscape:cx="30.372881"
+   inkscape:cy="21.694915"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Capa_1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<g
+   id="g934"
+   transform="matrix(0.078125,0,0,0.078125,5,5)"
+   style="fill:#f2f2f2;fill-opacity:1"><g
+     id="g6"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g4"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<rect
+   id="rect2"
+   height="90"
+   width="30"
+   y="211"
+   x="211"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g12"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g10"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<path
+   id="path8"
+   d="M 331,113.793 V 157.973 301 h 60 v -75 c 0,-45.498 -22.939,-87.378 -60,-112.207 z"
+   inkscape:connector-curvature="0"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g18"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g16"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<rect
+   id="rect14"
+   height="30"
+   width="60"
+   y="271"
+   x="121"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g24"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g22"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<path
+   id="path20"
+   d="m 482,301 -1,-75 C 481,101.928 380.072,0 256,0 131.928,0 31,101.928 31,226 v 75 h 60 v -60 h 90 v -60 h 30 v -60 h 64.541 L 301,137.972 V 65.556 l 21.035,9.229 C 382.152,101.181 421,160.536 421,226 v 75 z"
+   inkscape:connector-curvature="0"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g30"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g28"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<polygon
+   id="polygon26"
+   points="241,181 271,181 271,301 301,301 301,174.027 266.459,151 241,151 "
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g36"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g34"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<rect
+   id="rect32"
+   height="60"
+   width="512"
+   y="331"
+   x="0"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g42"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g40"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<path
+   id="path38"
+   d="m 136,421 c -16.538,0 -30,13.462 -30,30 0,2.813 0.396,5.918 1.025,8.115 L 136,512 164.33,460.902 c 1.113,-3.149 1.67,-6.475 1.67,-9.902 0,-16.538 -13.462,-30 -30,-30 z"
+   inkscape:connector-curvature="0"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g48"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g46"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<path
+   id="path44"
+   d="m 376,421 c -16.538,0 -30,13.462 -30,30 0,2.813 0.396,5.918 1.025,8.115 L 376,512 404.33,460.902 c 1.113,-3.149 1.67,-6.475 1.67,-9.902 0,-16.538 -13.462,-30 -30,-30 z"
+   inkscape:connector-curvature="0"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g50"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g52"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g54"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g56"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g58"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g60"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g62"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g64"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g66"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g68"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g70"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g72"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g74"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g76"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g><g
+     id="g78"
+     style="fill:#f2f2f2;fill-opacity:1">
+</g></g>
+</svg>

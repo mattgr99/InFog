@@ -1,0 +1,45 @@
+/*
+    Buttons
+*/
+
+.button {
+    -fx-font-family: "Arial Narrow";
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}
+
+.okbtn {
+    -fx-background-color: #1565C0;
+    -fx-min-width:75px;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius:4px;
+    -fx-background-insets: 0px;
+    -fx-font-size: 14;
+}
+.okbtn:hover {
+    -fx-background-color: linear-gradient(#1E88E5,#1565C0);
+}
+
+.vmbtn {
+    -fx-background-color: #3391CF;
+    -fx-min-width:75px;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius:4px;
+    -fx-background-insets: 0px;
+    -fx-font-size: 14;
+}
+
+.cancelbtn {
+    -fx-background-color: #F44336;
+    -fx-min-width:75px;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius:4px;
+    -fx-background-insets: 0px;
+    -fx-font-size: 14;
+}
+.cancelbtn:hover{
+    -fx-background-color: linear-gradient(#E57373,#F44336);
+}
+
+
+

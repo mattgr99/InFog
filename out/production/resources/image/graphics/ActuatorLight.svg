@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Capa_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 50 50"
+   xml:space="preserve"
+   sodipodi:docname="ActuatorLight.svg"
+   width="50"
+   height="50"
+   inkscape:version="0.92.4 5da689c313, 2019-01-14"><metadata
+   id="metadata67"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
+   id="defs65" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1366"
+   inkscape:window-height="740"
+   id="namedview63"
+   showgrid="false"
+   inkscape:zoom="9.2704758"
+   inkscape:cx="4.8931009"
+   inkscape:cy="25.810509"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Capa_1" />
+
+
+
+
+<g
+   id="g892"
+   transform="matrix(0.078125,0,0,0.078125,5,5)"
+   style="fill:#f2f2f2;fill-opacity:1"><g
+     id="g6"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g4"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<path
+   id="path2"
+   d="M 421,188.789 V 87.237 C 438.422,81.024 451,64.53 451,45 451,20.186 430.814,0 406,0 c -25.228,0 -45,20.577 -45,45 0,19.53 12.578,36.024 30,42.237 v 101.552 l -63.252,63.252 34.834,69.668 26.836,-13.418 -25.166,-50.332 41.748,-41.748 41.748,41.748 -25.166,50.332 26.836,13.418 34.834,-69.668 z"
+   inkscape:connector-curvature="0"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g12"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g10"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<path
+   id="path8"
+   d="m 142.119,101.514 v -0.015 C 127.786,72.848 96.337,54.844 60.366,61.436 25.386,68.35 0,99.302 0,135 c 0,40.994 32.924,74.914 75,75 55.536,0 92.047,-58.533 67.119,-108.486 z M 90,150 H 60 v -30 h 30 z"
+   inkscape:connector-curvature="0"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g18"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g16"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<path
+   id="path14"
+   d="M 481,482 V 360 h -60 v 60 H 391 V 360 H 331 V 482 H 270 V 452 H 240 V 388.251 C 220.92,407.783 194.392,420 165,420 h -0.059 C 136.045,419.936 109.385,408.203 90,388.321 V 452 H 60 v 60 c 5.557,0 452,0 452,0 v -30 z"
+   inkscape:connector-curvature="0"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g24"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g22"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<path
+   id="path20"
+   d="M 232.119,281.499 192.797,202.864 120.69,229.235 C 106.859,235.939 93.107,240 75,240 h -0.059 c -11.953,-0.026 -23.45,-2.245 -34.305,-5.989 l 57.244,114.49 c 12.774,25.547 38.438,41.44 67.12,41.499 56.149,0 91.62,-59.31 67.119,-108.501 z"
+   inkscape:connector-curvature="0"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g><g
+     id="g30"
+     style="fill:#f2f2f2;fill-opacity:1">
+	<g
+   id="g28"
+   style="fill:#f2f2f2;fill-opacity:1">
+		<path
+   id="path26"
+   d="M 363.772,106.906 C 344.013,93.386 331,70.695 331,45 c 0,-12.059 3.096,-23.469 8.286,-33.701 L 133.834,48.164 c 14.597,9.899 26.843,23.375 35.121,39.917 13.991,28.134 15.007,61.591 1.23,91.232 z"
+   inkscape:connector-curvature="0"
+   style="fill:#f2f2f2;fill-opacity:1" />
+	</g>
+</g></g>
+<g
+   id="g32"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g34"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g36"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g38"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g40"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g42"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g44"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g46"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g48"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g50"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g52"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g54"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g56"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g58"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+<g
+   id="g60"
+   transform="matrix(0.83333333,0,0,0.83333333,4.1666667,-380.83333)">
+</g>
+</svg>

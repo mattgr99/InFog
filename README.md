@@ -1,6 +1,6 @@
-# Neblina
+# InFog
 
-Neblina is a simulator for **fog computing**
+InFog is a simulator for **fog computing**
 
 ## Dependencies
 
